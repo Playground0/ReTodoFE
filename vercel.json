@@ -4,8 +4,8 @@
     },
     "git" :{
         "deploymentEnabled": {
-            "main": false,
-            "dev": true
-          }
+            "main": true,
+            "dev": false
+          } 
     }
-  }
+}
