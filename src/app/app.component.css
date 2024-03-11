@@ -1,0 +1,17 @@
+.body{
+    /* background-color: #DEDEDE; */
+    font-family: 'Bree Serif';
+}
+.content{
+    overflow-x: scroll;
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    /* height: 80vh; */
+    padding-top: 5rem;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.content::-webkit-scrollbar {
+    display: none;
+}
