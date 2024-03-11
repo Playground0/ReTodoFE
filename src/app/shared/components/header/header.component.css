@@ -1,0 +1,39 @@
+.container{
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 0.8fr 5fr;
+    justify-content: start;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    overflow: hidden;
+    width: 99%;
+}
+.link{
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    align-items: center;
+    justify-items: end;
+    font-weight: 500;
+}
+
+a{
+    cursor: pointer;
+    font-size: 20px;
+    width: 30%;
+}
+
+a:focus{
+    color: grey;
+}
+
+.signUp{
+    cursor: pointer;
+    background-color: #FDC707;
+    padding: 3%;
+    border-radius: 20px;
+    width: 40%;
+    border: none;
+    font-weight: bold;
+    font-size: 20px;
+}
