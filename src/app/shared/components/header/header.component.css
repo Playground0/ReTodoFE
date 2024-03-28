@@ -1,39 +1,60 @@
-.container{
+@import '../../../../styles.css';
+
+.nav{
     display: grid;
-    gap: 1.5rem;
-    grid-template-columns: 0.8fr 5fr;
-    justify-content: start;
-    align-items: center;
+    gap: 1rem;
+    grid-template-columns: repeat(6, 1fr);
+    place-items: center;
     position: fixed;
     top: 0;
     overflow: hidden;
     width: 99%;
+    background-color: var(--background-color);
+    padding: 2rem 0 2rem 0;
 }
-.link{
-    display: grid;
-    grid-template-columns: repeat(5,1fr);
-    align-items: center;
-    justify-items: end;
+.nav h1{
+    transition: 1s;
+    background: linear-gradient(to right, var(--primary-color) 50%, var(--secondary-color) 50%);
+    padding: 1rem;
+    border-radius: 20px;
     font-weight: 500;
+    box-shadow: var(--default-shadow);
 }
-
-a{
+.nav .re-text{
+    font-weight: bolder;
+}
+.nav h1:hover{
     cursor: pointer;
-    font-size: 20px;
+    color: var(--background-color);
+    background: linear-gradient(to right, var(--secondary-color) 50%, var(--primary-color)  50%);
+}
+.nav a{
+    cursor: pointer;
+    font-size: 22px;
     width: 30%;
+    font-weight: bold;
+    color: var(--nav-color);
+    transition: 0.3s;
 }
 
-a:focus{
-    color: grey;
+.nav  a:hover{
+    color: var(--secondary-color);
 }
 
-.signUp{
+.nav .signUp{
     cursor: pointer;
-    background-color: #FDC707;
+    background-color: var(--button-color);
     padding: 3%;
     border-radius: 20px;
     width: 40%;
     border: none;
     font-weight: bold;
     font-size: 20px;
+    opacity: 0.8;
+    transition: 0.3s;
+}
+.nav .signUp:hover{
+    background-color: black;
+    color: var(--button-color);
+    opacity: 1;
 }

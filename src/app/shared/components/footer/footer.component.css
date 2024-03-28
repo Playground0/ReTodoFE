@@ -1,8 +1,26 @@
+@import '../../../../styles.css';
+
 .container{
-    position: fixed;
-    bottom: 0;
-    width: 99%;
-    /* border: 1px solid black; */
     padding-top: 0.5%;
     padding-bottom: 0.5%;
+    display: grid;
+    grid-template-rows: 2fr 2fr;
+    padding: 2% 0 2% 0;
+    gap: 1rem;
+    background-color: var(--background-color);
+    font-size: 20px;
+    font-weight: 600;
+}
+.coffee-text{
+    cursor: pointer;
+    background: linear-gradient(to right, var(--primary-color) 50%, var(--secondary-color) 50%);
+    margin: auto;
+    padding: 1rem;
+    border-radius: 20px;
+    transition: 1s;
+    box-shadow: var(--default-shadow);
+}
+.coffee-text:hover{
+    color: var(--background-color);
+    background: linear-gradient(to right, var(--secondary-color) 50%, var(--primary-color) 50%);
 }

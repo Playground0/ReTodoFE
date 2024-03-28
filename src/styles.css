@@ -2,3 +2,12 @@
 
 html, body { background-color: #DEDEDE;}
 body { font-family: 'Bree Serif', serif; text-align: center;}
+
+:root{
+    --background-color: #D9D9D9;
+    --primary-color: #14AE89;
+    --secondary-color:#45a049;
+    --button-color: #FDC707;
+    --nav-color: grey;
+    --default-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
