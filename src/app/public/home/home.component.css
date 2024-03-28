@@ -1,0 +1,82 @@
+@import '../../../styles.css';
+
+.container{
+    background-color: var(--background-color);
+}
+.container .welcome-text span{
+    font-size: 100px;
+}
+.welcome-text{
+    overflow: hidden; /* Ensures the content is not revealed until the animation */
+    padding: 2rem 12rem 5rem 12rem;
+    display: grid;
+    grid-template-columns: 2fr 2fr 2fr;;
+    place-items: center;
+    gap: 2rem;
+    font-weight: 600;
+    animation: typing 3s steps(200, end);
+}
+
+.unclock-text{
+    color:var(--primary-color);
+    text-align: justify;
+}
+.organize-text{
+    color: var(--secondary-color);
+    text-align: center;
+}
+.welcome-text .signUp{
+    cursor: pointer;
+    background-color: var(--button-color);
+    color: black;
+    padding: 1rem;
+    border-radius: 20px;
+    border: none;
+    font-weight: bold;
+    font-size: 20px;
+    transition: 0.3s;
+    box-shadow: var(--default-shadow);
+}
+
+.welcome-text .signUp:hover{
+    background-color: black;
+    color: var(--button-color);
+   
+}
+
+.bottom-grid{
+    /* background-color: #ffff; */
+    background: linear-gradient(to right, var(--primary-color) 50%, var(--secondary-color) 50%);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 10rem;
+    padding: 6rem 10rem 6rem 10rem;
+    box-shadow: var(--default-shadow);
+    border-radius: 20px;
+}
+.box{
+    background-color: var(--background-color);
+    border-radius: 20px;
+    padding: 1rem 1rem 1rem 1rem; 
+    display: grid;
+    gap: 1rem;
+    grid-template-rows: 2fr 2fr;
+    box-shadow: var(--default-shadow);
+}
+.box .text{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+}
+
+.image img{
+    width: 100%;
+    height: 100%;
+    border-radius: 10%;
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 79.9% }
+}
