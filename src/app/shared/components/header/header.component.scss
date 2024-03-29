@@ -1,0 +1,77 @@
+@import '../../../../styles.scss';
+
+.nav{
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(6, 1fr);
+    place-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    width: 100%;
+    background-color: $background-color;
+    padding: 2rem 0 2rem 0;
+    z-index: 1;
+
+    h1{
+        transition: 1s;
+        background: linear-gradient(to right, $primary-color 50%, $secondary-color 50%);
+        padding: 1rem;
+        border-radius: 20px;
+        font-weight: 500;
+        box-shadow: $default-shadow;
+        font-family: "Ruda", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 900;
+        font-style: normal;
+    }
+
+    h1:hover{
+        cursor: pointer;
+        color: $background-color;
+        background: linear-gradient(to right, $secondary-color 50%, $primary-color  50%);
+    }
+
+    .re-text{
+        font-weight: bolder;
+    }
+
+    a{
+        cursor: pointer;
+        font-size: 22px;
+        width: 30%;
+        font-weight: bold;
+        color: $text-color;
+        transition: 0.3s;
+        text-decoration: none;
+    }
+
+    a:hover{
+        color: $secondary-color;
+    }
+
+    a.active {
+        text-decoration:line-through;
+      }
+
+    .signUp{
+        cursor: pointer;
+        background-color: $button-color;
+        padding: 3%;
+        border-radius: 20px;
+        width: 40%;
+        border: none;
+        font-weight: bold;
+        font-size: 20px;
+        opacity: 0.8;
+        transition: 0.3s;
+    }
+
+    .signUp:hover{
+        background-color: black;
+        color: $button-color;
+        opacity: 1;
+    }
+    
+}

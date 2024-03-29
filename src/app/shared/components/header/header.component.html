@@ -1,21 +1,24 @@
 
 <div class="nav">
-    <h1>
+    <h1 routerLink="">
         <span class="re-text">Re</span>ToDo
     </h1>
-        <a>
-            Features
+        <a *ngFor="let nav of navConfig" [routerLink]="nav.link" routerLinkActive="active">
+            {{nav.label}}
         </a>
-        <a>
+        <!-- <a routerLink="/demo" routerLinkActive="active">
             Demo
         </a>
-        <a>
+        <a routerLink="/aboutus" routerLinkActive="active">
             About us
         </a>
-        <a>
+        <a routerLink="/auth/login" routerLinkActive="active">
             Login
-        </a>
-        <button class="signUp">
+        </a> -->
+        <button *ngIf="!showPrivate" routerLink="/auth/register" class="signUp">
             It's Free
+        </button>
+        <button *ngIf="showPrivate" (click)="logout()" class="signUp">
+            <mat-icon>power_settings_new</mat-icon>
         </button>
 </div>

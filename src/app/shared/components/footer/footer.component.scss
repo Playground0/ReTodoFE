@@ -1,0 +1,28 @@
+@import '../../../../styles.scss';
+
+.container{
+    display: grid;
+    grid-template-rows: 2fr 2fr;
+    padding: 2% 0 2% 0;
+    gap: 1rem;
+    background-color: $background-color;
+    font-size: 20px;
+    font-weight: 600;
+    color: $text-color;
+    border-top: 1px solid $primary-color;
+    margin-left: 10rem;
+    margin-right: 10rem;
+}
+.coffee-text{
+    cursor: pointer;
+    background: linear-gradient(to right, $primary-color 50%, $secondary-color 50%);
+    margin: auto;
+    padding: 1rem;
+    border-radius: 20px;
+    transition: 1s;
+    box-shadow: $default-shadow;
+}
+.coffee-text:hover{
+    color: $background-color;
+    background: linear-gradient(to right, $secondary-color 50%, $primary-color 50%);
+}

@@ -2,22 +2,21 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { PublicRoutingModule } from './public-routing.module';
-import { HomeComponent } from './home/home.component';
-import { LoginComponent } from './login/login.component';
-import { DemoComponent } from './demo/demo.component';
-import { AboutusComponent } from './aboutus/aboutus.component';
+import { HomeComponent } from './components/home/home.component';
+import { AuthPageComponent } from './components/auth-page/auth-page.component';
+import { DemoComponent } from './components/demo/demo.component';
+import { AboutusComponent } from './components/aboutus/aboutus.component';
 
+import { SharedModule } from '../shared/shared.module';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
     HomeComponent,
-    LoginComponent,
+    AuthPageComponent,
     DemoComponent,
-    AboutusComponent
+    AboutusComponent,
   ],
-  imports: [
-    CommonModule,
-    PublicRoutingModule
-  ]
+  imports: [CommonModule, PublicRoutingModule, SharedModule, MatIconModule],
 })
-export class PublicModule { }
+export class PublicModule {}
