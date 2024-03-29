@@ -1,8 +1,6 @@
 @import '../../../../styles.css';
 
 .container{
-    padding-top: 0.5%;
-    padding-bottom: 0.5%;
     display: grid;
     grid-template-rows: 2fr 2fr;
     padding: 2% 0 2% 0;
@@ -11,6 +9,9 @@
     font-size: 20px;
     font-weight: 600;
     color: var(--text-color);
+    border-top: 1px solid var(--primary-color);
+    margin-left: 10rem;
+    margin-right: 10rem;
 }
 .coffee-text{
     cursor: pointer;

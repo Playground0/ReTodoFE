@@ -19,6 +19,10 @@
     border-radius: 20px;
     font-weight: 500;
     box-shadow: var(--default-shadow);
+    font-family: "Ruda", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 900;
+    font-style: normal;
 }
 .nav .re-text{
     font-weight: bolder;
