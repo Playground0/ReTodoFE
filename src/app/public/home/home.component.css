@@ -62,6 +62,7 @@
     gap: 1rem;
     grid-template-rows: 2fr 2fr;
     box-shadow: var(--default-shadow);
+    color: var(--text-color);
 }
 .box .text{
     display: flex;
