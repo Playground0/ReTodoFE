@@ -1,0 +1,57 @@
+@import "../../../../styles.scss";
+
+.container {
+  display: flex;
+  gap: 2rem;
+  flex-direction: column;
+  align-items: center;
+
+  .title{
+    font-size: 2rem;
+    color: white;
+  }
+
+  .form {
+    display: grid;
+    gap: 1rem;
+    justify-content: center;
+    grid-template-columns: 1fr 1fr;
+
+    .full-width {
+      width: 100%;
+      text-align: center;
+    }
+  }
+
+  .icon-btn{
+    background-color: $button-color;
+    padding: 1rem;
+    border-radius: 1rem;
+    color: black;
+    opacity: 0.8;
+    box-shadow: $default-shadow;
+  }
+
+  .icon-btn:hover{
+    background-color: black;
+    color: $button-color;
+    opacity: 1;
+  }
+
+  .name-btn {
+    font-size: 1.5rem;
+    background-color: $button-color;
+    padding: 1rem 4rem;
+    border-radius: 20px;
+    color: black;
+    font-weight: bold;
+    box-shadow: $default-shadow;
+    opacity: 0.8;
+  }
+
+  .name-btn:hover{
+    background-color: black;
+    color: $button-color;
+    opacity: 1;
+  }
+}

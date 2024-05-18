@@ -1,0 +1,70 @@
+@import "../../../../styles.scss";
+
+.container {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+
+  .upper-box {
+    display: flex;
+    gap: 1rem;
+    background-color: #739072;
+    border-radius: 20px 20px 0 0;
+    box-shadow: $default-shadow;
+    border: 1px solid $primary-color;
+    border-bottom: none;
+
+    .nav-section {
+      flex: 1;
+      background-color: $background-color;
+      border-radius: 20px 0 0 0;
+
+      .nav-btn {
+        font-size: 2.5rem;
+        background-color: $background-color;
+        padding: 1rem;
+        cursor: pointer; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 15vh;
+      }
+
+      .nav-btn:nth-child(1){
+        border-radius: 20px 0 0 0;
+      }
+
+      .nav-active{
+        background-color: $primary-color;
+        color: white;
+      }
+      .nav-active:nth-child(1){
+        background-color: $primary-color;
+        border-radius: 20px 0 0 0;
+      }
+    }
+
+    .form-area{
+      flex:2;
+      padding: 3rem;
+      place-content: center;
+    }
+  }
+
+  .lower-box {
+    color: white;
+    text-align: center;
+    padding: 3rem;
+    font-size: 2.5rem;
+    background-color: $secondary-color;
+    border-radius: 0 0 20px 20px;
+    box-shadow: $default-shadow;
+    border: 1px solid $primary-color;
+    
+    .title{
+      color: black;
+    }
+  }
+}

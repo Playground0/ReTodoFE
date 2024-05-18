@@ -1,0 +1,42 @@
+<div class="container">
+  <div>
+    <div class="upper-box">
+      <div class="nav-section">
+        <div
+          class="nav-btn"
+          routerLink="/auth/login"
+          routerLinkActive="nav-active"
+        >
+        <mat-icon>login</mat-icon>
+          Login
+        </div>
+        <div
+          class="nav-btn"
+          routerLink="/auth/register"
+          routerLinkActive="nav-active"
+        >
+        <mat-icon>person_add</mat-icon>
+          Register
+        </div>
+        <div
+          class="nav-btn"
+          routerLink="/auth/reset"
+          routerLinkActive="nav-active"
+        >
+        <mat-icon>lock</mat-icon>
+          Reset Password
+        </div>
+      </div>
+      <div class="form-area">
+        <rtd-custom-form [config$]="customFormBody"></rtd-custom-form>
+      </div>
+    </div>
+  
+    <div class="lower-box">
+      <span>Think out of the box</span><br />
+      <span>Work smart</span><br />
+      <span>Organize your life with <strong class="title">ReToDo</strong></span
+      ><br />
+    </div>
+  </div>
+</div>
