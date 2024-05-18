@@ -1,10 +1,10 @@
-@import "../../../styles.css";
+@import "../../../../styles.scss";
 
 .container {
-  background-color: var(--background-color);
+  background-color: $background-color;
   border-radius: 100px;
   margin-top: 1rem;
-  border: 2px solid var(--secondary-color);
+  border: 2px solid $secondary-color;
 }
 .container .welcome-text span {
   font-size: 100px;
@@ -24,16 +24,16 @@
 }
 
 .unclock-text {
-  color: var(--primary-color);
+  color: $primary-color;
   text-align: center;
 }
 .organize-text {
-  color: var(--secondary-color);
+  color: $secondary-color;
   text-align: center;
 }
 .welcome-text .signUp {
   cursor: pointer;
-  background-color: var(--button-color);
+  background-color: $button-color;
   color: black;
   padding: 1rem;
   border-radius: 20px;
@@ -41,39 +41,39 @@
   font-weight: bold;
   font-size: 20px;
   transition: 0.3s;
-  box-shadow: var(--default-shadow);
+  box-shadow: $default-shadow;
 }
 
 .welcome-text .signUp:hover {
   background-color: black;
-  color: var(--button-color);
+  color: $button-color;
 }
 
 .bottom-grid {
   background: linear-gradient(
     to right,
-    var(--primary-color) 50%,
-    var(--secondary-color) 50%
+    $primary-color 50%,
+    $secondary-color 50%
   );
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 8rem;
   padding:10rem 5rem 10rem 5rem;
-  box-shadow: var(--default-shadow);
+  box-shadow: $default-shadow;
   border-radius: 0 0 99px 99px;;
 }
 .box {
-  background-color: var(--background-color);
+  background-color: $background-color;
   border-radius: 20px;
   padding: 1rem 1rem 1rem 1rem;
   display: grid;
   gap: 1rem;
   grid-template-rows: 2fr 2fr;
-  box-shadow: var(--default-shadow);
-  color: var(--text-color);
-  font-family: var(--normal-text-font);
-  font-style: var(--normal-text-font-style);
-  font-weight: var(--normal-text-font-weight);
+  box-shadow: $default-shadow;
+  color: $text-color;
+  font-family: $normal-text-font;
+  font-style: $normal-text-font-style;
+  font-weight: $normal-text-font-weight;
   font-optical-sizing: auto;
 }
 .box .text {
