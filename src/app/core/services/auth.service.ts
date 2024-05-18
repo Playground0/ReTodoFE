@@ -15,7 +15,7 @@ import { FormsService } from 'src/app/shared/service/forms.service';
 })
 //TODO: Refactor the whole service
 export class AuthService {
-  isLocalHost: boolean = true;
+  isLocalHost: boolean = false;
   apiUrl: string = this.isLocalHost ? 'http://localhost:8000/api/v1' : 'https://retodobe.onrender.com/api/v1';
   private isUserLoggedIn = new BehaviorSubject<boolean>(false);
   isUserLoggedIn$ = this.isUserLoggedIn.asObservable();
