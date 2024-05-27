@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IUser } from 'src/app/public/models/auth-page.model';
+import { IUser } from '../model/auth-page.model';
 
 @Injectable({
   providedIn: 'root',
@@ -8,21 +8,21 @@ export class LocalDataService {
   private tokenName = 'rtdAuthToken';
   private userDataName = 'rtdUserData';
 
-  public set tokenLocalData(value: string) {
+  public set localTokenData(value: string) {
     localStorage.setItem(this.tokenName, value);
   }
 
-  public get tokenLocalData(): string {
+  public get localTokenData(): string {
     let sessionData = localStorage.getItem(this.tokenName);
     if (!sessionData) return '';
     return sessionData;
   }
 
-  public set userLocalData(value: IUser | string) {
+  public set localUserData(value: IUser | string) {
     localStorage.setItem(this.userDataName, JSON.stringify(value));
   }
 
-  public get userLocalData(): IUser | string{
+  public get localUserData(): IUser | string{
     let userData = localStorage.getItem(this.userDataName);
     if (!userData) return '';
     return JSON.parse(userData);

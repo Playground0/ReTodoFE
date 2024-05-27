@@ -8,7 +8,7 @@ const routes: Routes = [
       import('./public/public.module').then((m) => m.PublicModule),
   },
   {
-    path: 'profile',
+    path: 'todo',
     loadChildren: () =>
       import('./private/private.module').then((m) => m.PrivateModule),
   },

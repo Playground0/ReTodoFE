@@ -1,8 +1,9 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { LocalDataService } from 'src/app/core/services/localdata.service';
-import { IUser } from 'src/app/public/models/auth-page.model';
+import { IUser } from '../../../core/model/auth-page.model';
+import { APIStatusMessage, IAPIData } from '../../model/basic-api.model';
 
 @Component({
   selector: 'app-header',
@@ -10,7 +11,7 @@ import { IUser } from 'src/app/public/models/auth-page.model';
   styleUrls: ['./header.component.scss'],
 })
 //TODO: Refactor the whole code
-export class HeaderComponent implements OnInit, AfterViewInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   title = 'ReToDo';
   navConfig: any[] = [];
   showPrivate: boolean = false;
@@ -43,45 +44,55 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     },
     {
       link: '/aboutus',
+      label: 'Features',
+    },
+    {
+      link: '/aboutus',
       label: 'About us',
     },
     {
-      link: '/profile',
+      link: '/todo/profile',
       label: 'Profile',
     },
   ];
+  private subscription = new Subscription()
 
   constructor(
     private authService: AuthService,
     private localDataService: LocalDataService
   ) {}
 
-  ngAfterViewInit(): void {}
-
   ngOnInit(): void {
     this.navConfig = this.defaultNavConfig;
-    this.authService.isUserLoggedIn$.subscribe({
-      next: (status: boolean) => {
-        if (status || this.authService.isAuthenticated()) {
-          this.navConfig = this.loggedInNavConfig;
-          this.showPrivate = true;
-          this.authService.confirmUserLoggedIn();
-          this.userInfo = this.localDataService.userLocalData as IUser;
-          return;
-        }
-        this.showPrivate = false;
-        this.navConfig = this.defaultNavConfig;
-      },
-    });
+    this.subscription.add(
+      this.authService.isUserLoggedIn$.subscribe({
+        next: (status: boolean) => {
+          if (status || this.authService.isAuthenticated()) {
+            this.navConfig = this.loggedInNavConfig;
+            this.showPrivate = true;
+            this.authService.confirmUserLoggedIn();
+            this.userInfo = this.localDataService.localUserData as IUser;
+            return;
+          }
+          this.showPrivate = false;
+          this.navConfig = this.defaultNavConfig;
+        },
+      }) ,
+    )
+    
   }
 
   logout() {
     this.authService.logout(this.userInfo.email).subscribe({
-      next: (res) => {
-        if (res.Action_Status === 'Success') {
+      next: (res:IAPIData) => {
+        if (res.Status === APIStatusMessage.Success) {
           console.log('logged out successfully');
         }
       },
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }
