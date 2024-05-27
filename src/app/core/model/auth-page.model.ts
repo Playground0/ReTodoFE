@@ -31,5 +31,9 @@ export interface IUser{
     email: string,
     id: string,
     userRole: string,
-    username: string
+    username: string,
+}
+
+export interface IUserAPI extends IUser{
+    sessionToken?: string,
 }

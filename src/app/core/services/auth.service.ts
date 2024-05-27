@@ -1,14 +1,16 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 import { LocalDataService } from './localdata.service';
 import {
   ICreateUser,
   ILoginUser,
   IUser,
-} from 'src/app/public/models/auth-page.model';
+  IUserAPI,
+} from '../model/auth-page.model';
 import { Router } from '@angular/router';
 import { FormsService } from 'src/app/shared/service/forms.service';
+import { APIStatusMessage, IAPIData } from 'src/app/shared/model/basic-api.model';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +18,9 @@ import { FormsService } from 'src/app/shared/service/forms.service';
 //TODO: Refactor the whole service
 export class AuthService {
   isLocalHost: boolean = false;
-  apiUrl: string = this.isLocalHost ? 'http://localhost:8000/api/v1' : 'https://retodobe.onrender.com/api/v1';
+  apiUrl: string = this.isLocalHost
+    ? 'http://localhost:8000/api/v1'
+    : 'https://retodobe.onrender.com/api/v1';
   private isUserLoggedIn = new BehaviorSubject<boolean>(false);
   isUserLoggedIn$ = this.isUserLoggedIn.asObservable();
   private tokenName: string = 'rtdAuthToken';
@@ -30,46 +34,55 @@ export class AuthService {
   ) {}
 
   public isAuthenticated(): boolean {
-    const token = this.localDataService.tokenLocalData;
+    const token = this.localDataService.localTokenData;
     return token ? true : false;
   }
 
-  public login(loginDetails: ILoginUser) {
-    return this.http.patch(`${this.apiUrl}/auth/login`, loginDetails).pipe(
-      map((res: any) => {
-        this.localDataService.tokenLocalData = res?.response?.sessionToken;
-        let userData: IUser = {
-          email: res.response?.email,
-          id: res.response?.id,
-          userRole: res.response?.userRole,
-          username: res.response?.username,
-        };
-        this.localDataService.userLocalData = userData;
-        this.setLoggedIn(true);
-        return res;
-      })
-    );
-  }
-
-  public register(loginDetails: ICreateUser) {
-    return this.http.post(`${this.apiUrl}/auth/register`, loginDetails);
-  }
-
-  public logout(email: string) {
-    const sessionToken = this.localDataService.tokenLocalData;
-    const requestObject = { email, sessionToken };
-    return this.http.patch(`${this.apiUrl}/auth/logout`, requestObject).pipe(
-      map((res: any) => {
-        if (res.Action_Status === 'Success') {
-          this.localDataService.removeLocalData(this.tokenName);
-          this.localDataService.removeLocalData(this.userDataName);
-          this.formService.currentData = null;
-          this.isUserLoggedIn.next(false);
-          this.router.navigateByUrl('/auth/login');
+  public login(loginDetails: ILoginUser): Observable<IAPIData> {
+    return this.http
+      .patch<IAPIData>(`${this.apiUrl}/auth/login`, loginDetails)
+      .pipe(
+        map((res: IAPIData) => {
+          const user: IUserAPI | null  = res.Data ? res.Data as IUserAPI : null;
+          if (user){
+            this.localDataService.localTokenData = user.sessionToken
+              ? user.sessionToken
+              : '';
+            let userData: IUser = {
+              email: res.Data?.email,
+              id: res.Data?.id,
+              userRole: res.Data?.userRole,
+              username: res.Data?.username,
+            };
+            this.localDataService.localUserData = userData;
+            this.setLoggedIn(true);
+          }
           return res;
-        }
-      })
-    );
+        })
+      );
+  }
+
+  public register(loginDetails: ICreateUser) : Observable<IAPIData>{
+    return this.http.post<IAPIData>(`${this.apiUrl}/auth/register`, loginDetails);
+  }
+
+  public logout(email: string): Observable<IAPIData> {
+    const sessionToken = this.localDataService.localTokenData;
+    const requestObject = { email, sessionToken };
+    return this.http
+      .patch<IAPIData>(`${this.apiUrl}/auth/logout`, requestObject)
+      .pipe(
+        map((res: IAPIData) => {
+          if (res.Status === APIStatusMessage.Success) {
+            this.localDataService.removeLocalData(this.tokenName);
+            this.localDataService.removeLocalData(this.userDataName);
+            this.formService.currentData = null;
+            this.isUserLoggedIn.next(false);
+            this.router.navigateByUrl('/auth/login');
+          }
+          return res;
+        })
+      );
   }
 
   public resetPassword(loginDetails: unknown) {

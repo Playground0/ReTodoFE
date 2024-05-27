@@ -4,10 +4,11 @@ import {
   ICustomFormBody,
   IFormControlBody,
 } from 'src/app/shared/model/form.model';
-import { AuthPageType, ICreateUser, ILoginUser } from '../../models/auth-page.model';
+import { AuthPageType, ICreateUser, ILoginUser } from '../../../core/model/auth-page.model';
 import { FormsService } from 'src/app/shared/service/forms.service';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { Subscription } from 'rxjs';
+import { APIStatusMessage, IAPIData } from 'src/app/shared/model/basic-api.model';
 
 @Component({
   selector: 'app-auth-page',
@@ -183,8 +184,8 @@ export class AuthPageComponent implements OnInit, OnDestroy {
 
   private login(formData: ILoginUser) {
     this.authService.login(formData).subscribe({
-      next: (res: any) => {
-        if (res) {
+      next: (res: IAPIData) => {
+        if (res.Status === APIStatusMessage.Success) {
           this.formService.currentData = null
           this.router.navigateByUrl('/profile');
         }
@@ -198,8 +199,8 @@ export class AuthPageComponent implements OnInit, OnDestroy {
   private register(formData: ICreateUser) {
     formData.userRole = 'user'
     this.authService.register(formData).subscribe({
-      next: (res) => {
-        if(res){
+      next: (res: IAPIData) => {
+        if(res.Status === APIStatusMessage.Success){
           this.formService.currentData = null
           this.router.navigateByUrl('/auth/login');
         }
