@@ -1,1 +1,23 @@
-<p>todo-task works!</p>
+<div class="top-section">
+  <div class="title-section">
+    <h2>{{ pageTitle }}</h2>
+    <span>Task:{{ tasks.length }}</span>
+  </div>
+  <button class="add-btn" (click)="openDialog('200ms', '200ms', currentPanel)">
+    <mat-icon>add_circle</mat-icon>
+  </button>
+</div>
+
+<div class="task-section">
+  <div class="task" *ngFor="let task of tasks" (click)="showTaskDetails(task)">
+    <mat-checkbox
+      class="checkbox"
+      (click)="markAsDone($event, task)"
+    ></mat-checkbox>
+    <div>{{ task.taskTitle }}</div>
+  </div>
+
+  <button class="add-btn" (click)="openDialog('200ms', '200ms', currentPanel)">
+    + Add task
+  </button>
+</div>

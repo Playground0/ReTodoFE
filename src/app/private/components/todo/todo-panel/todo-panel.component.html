@@ -1,1 +1,9 @@
-<p>todo-panel works!</p>
+<div class="content" *ngIf="panelItems">
+    <div *ngIf="panelItems?.tilte" class="list-title">
+        <h2>{{panelItems.tilte}} ({{panelItems.panelLinks.length}}/5)</h2>
+        <button class="title-btn"><mat-icon>library_add</mat-icon></button>
+    </div>
+    <div class="panelAction" *ngFor="let item of panelItems.panelLinks">
+        <a class="side-link" (click)="sendAction(item)" title="{{item.tooltip}}">{{item.name}}</a>
+    </div>
+</div>

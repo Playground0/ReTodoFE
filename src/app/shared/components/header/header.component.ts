@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { LocalDataService } from 'src/app/core/services/localdata.service';
 import { IUser } from '../../../core/model/auth-page.model';
-import { APIStatusMessage, IAPIData } from '../../model/basic-api.model';
+import { APIStatusMessage, IAPIResponse } from '../../model/basic-api.model';
 
 @Component({
   selector: 'app-header',
@@ -84,7 +84,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   logout() {
     this.authService.logout(this.userInfo.email).subscribe({
-      next: (res:IAPIData) => {
+      next: (res:IAPIResponse) => {
         if (res.Status === APIStatusMessage.Success) {
           console.log('logged out successfully');
         }

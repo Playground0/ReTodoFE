@@ -1,1 +1,31 @@
-<p>todo works!</p>
+<div class="content">
+  <div class="top-section">
+    <div class="panel-section">
+      <div class="panel default-panel">
+        <app-todo-panel
+          [panelItems]="panelDefault"
+          (action)="panelAction($event)"
+        ></app-todo-panel>
+      </div>
+      <div class="panel list-panel">
+        <app-todo-panel
+          [panelItems]="userLists"
+          (action)="panelAction($event)"
+        ></app-todo-panel>
+      </div>
+    </div>
+    <div class="task-section">
+      <app-todo-task
+        [tasks]="tasks"
+        [pageTitle]="listTitle"
+        [currentPanel]="currentPanel"
+        (newTask)="addTask($event)"
+        (updateTask)="updateTask($event)"
+        (deleteTask)="deleteTask($event)"
+      ></app-todo-task>
+    </div>
+  </div>
+  <div class="bottom-section">
+    <app-todo-actions></app-todo-actions>
+  </div>
+</div>

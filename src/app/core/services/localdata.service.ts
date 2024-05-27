@@ -18,11 +18,11 @@ export class LocalDataService {
     return sessionData;
   }
 
-  public set localUserData(value: IUser | string) {
+  public set localUserData(value: IUser | unknown) {
     localStorage.setItem(this.userDataName, JSON.stringify(value));
   }
 
-  public get localUserData(): IUser | string{
+  public get localUserData(): IUser | unknown {
     let userData = localStorage.getItem(this.userDataName);
     if (!userData) return '';
     return JSON.parse(userData);

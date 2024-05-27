@@ -1,12 +1,12 @@
 @import "../../../../styles.scss";
 
-.container {
+.content {
   background-color: $background-color;
   border-radius: 100px;
   margin-top: 1rem;
   border: 2px solid $secondary-color;
 }
-.container .welcome-text span {
+.content .welcome-text span {
   font-size: 100px;
 }
 .welcome-text {
