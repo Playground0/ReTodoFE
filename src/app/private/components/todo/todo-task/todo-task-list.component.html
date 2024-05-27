@@ -1,0 +1,28 @@
+<div class="top-section">
+  <div class="title-section">
+    <h2>{{ pageTitle }}</h2>
+    <span>Task:{{ tasks.length }}</span>
+  </div>
+  <button class="add-btn" (click)="openDialog('200ms', '200ms')">
+    <mat-icon>add_circle</mat-icon>
+  </button>
+</div>
+
+<div class="task-section">
+  <div class="task" *ngFor="let task of tasks" (click)="showTaskDetails(task)">
+    <div>
+      <mat-checkbox
+        class="checkbox"
+        (click)="markAsDone(task); $event.stopPropagation()"
+      ></mat-checkbox>
+      {{ task.taskTitle }}
+    </div>
+    <mat-icon (click)="deleteTask(task); $event.stopPropagation()"
+      >delete</mat-icon
+    >
+  </div>
+
+  <button class="add-btn" (click)="openDialog('200ms', '200ms')">
+    + Add task
+  </button>
+</div>

@@ -1,1 +1,33 @@
-<p>todo works!</p>
+<div class="content">
+  <div class="top-section">
+    <div class="panel-section">
+      <div class="panel default-panel">
+        <app-todo-panel
+          [panelItems]="panelDefault"
+          (action)="panelAction($event)"
+        ></app-todo-panel>
+      </div>
+      <div class="panel user-list-panel">
+        <app-todo-panel [panelItems]="userLists" (action)="panelAction($event)">
+          <div class="list-title">
+            <h2>
+              <h2>My Projects ({{ userLists.length }}/5)</h2>
+            </h2>
+            <button class="title-btn"><mat-icon>library_add</mat-icon></button>
+          </div>
+        </app-todo-panel>
+      </div>
+    </div>
+    <div class="task-section">
+      <app-todo-task-list
+        [tasks]="tasks"
+        [pageTitle]="listTitle"
+        [currentPanel]="currentPanel"
+        (taskAction)="doTaskAction($event)"
+      ></app-todo-task-list>
+    </div>
+  </div>
+  <div class="bottom-section">
+    <app-todo-actions></app-todo-actions>
+  </div>
+</div>

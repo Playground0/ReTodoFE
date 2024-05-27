@@ -1,6 +1,6 @@
 import { IUserAPI } from "src/app/core/model/auth-page.model";
 
-export interface IAPIData {
+export interface IAPIResponse {
   Action: string;
   Code: number;
   Data: unknown | IUserAPI | any ;
