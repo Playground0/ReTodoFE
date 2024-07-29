@@ -10,7 +10,7 @@ import {
 } from '../model/auth-page.model';
 import { Router } from '@angular/router';
 import { FormsService } from 'src/app/shared/service/forms.service';
-import { APIStatusMessage, IAPIData } from 'src/app/shared/model/basic-api.model';
+import { APIStatusMessage, IAPIResponse } from 'src/app/shared/model/basic-api.model';
 
 @Injectable({
   providedIn: 'root',
@@ -37,12 +37,12 @@ export class AuthService {
     const token = this.localDataService.localTokenData;
     return token ? true : false;
   }
-
-  public login(loginDetails: ILoginUser): Observable<IAPIData> {
+//TODO: Refactor the below code
+  public login(loginDetails: ILoginUser): Observable<IAPIResponse> {
     return this.http
-      .patch<IAPIData>(`${this.apiUrl}/auth/login`, loginDetails)
+      .patch<IAPIResponse>(`${this.apiUrl}/auth/login`, loginDetails)
       .pipe(
-        map((res: IAPIData) => {
+        map((res: IAPIResponse) => {
           const user: IUserAPI | null  = res.Data ? res.Data as IUserAPI : null;
           if (user){
             this.localDataService.localTokenData = user.sessionToken
@@ -62,17 +62,17 @@ export class AuthService {
       );
   }
 
-  public register(loginDetails: ICreateUser) : Observable<IAPIData>{
-    return this.http.post<IAPIData>(`${this.apiUrl}/auth/register`, loginDetails);
+  public register(loginDetails: ICreateUser) : Observable<IAPIResponse>{
+    return this.http.post<IAPIResponse>(`${this.apiUrl}/auth/register`, loginDetails);
   }
 
-  public logout(email: string): Observable<IAPIData> {
+  public logout(email: string): Observable<IAPIResponse> {
     const sessionToken = this.localDataService.localTokenData;
     const requestObject = { email, sessionToken };
     return this.http
-      .patch<IAPIData>(`${this.apiUrl}/auth/logout`, requestObject)
+      .patch<IAPIResponse>(`${this.apiUrl}/auth/logout`, requestObject)
       .pipe(
-        map((res: IAPIData) => {
+        map((res: IAPIResponse) => {
           if (res.Status === APIStatusMessage.Success) {
             this.localDataService.removeLocalData(this.tokenName);
             this.localDataService.removeLocalData(this.userDataName);
@@ -99,5 +99,9 @@ export class AuthService {
 
   private setLoggedIn(value: boolean) {
     this.isUserLoggedIn.next(value);
+  }
+
+  public getApiUrl(){
+    return this.apiUrl;
   }
 }

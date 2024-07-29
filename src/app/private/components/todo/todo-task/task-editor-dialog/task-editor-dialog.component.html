@@ -1,0 +1,97 @@
+<div class="dialog-header-section">
+  <h2 class="dialog-title" *ngIf="!data" mat-dialog-title>Add Task</h2>
+  <h2 class="dialog-title" *ngIf="data" mat-dialog-title>Task Details</h2>
+  <button mat-button *ngIf="data" (click)="deleteTask()"><mat-icon class="delete-btn-icon">delete</mat-icon></button>
+</div>
+<mat-dialog-content>
+  <form class="form" [formGroup]="taskForm">
+    <mat-form-field>
+      <mat-label>Title</mat-label>
+      <input matInput formControlName="taskTitle" type="text" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <textarea matInput type="text" formControlName="taskDesc"></textarea>
+    </mat-form-field>
+
+    <div class="more-task-details">
+      <div class="date-time-picker">
+        <h3 class="subheading-date-time">Choose date and time:</h3>
+        <mat-form-field class="example-full-width">
+          <mat-label>End Date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker"
+            formControlName="taskEndDate"
+          />
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <!-- <button
+          class="toggle-time-btn"
+          mat-button
+          *ngIf="!showTimePicker"
+          (click)="toggleTimePicker()"
+        >
+          Time
+        </button> -->
+        <!-- <div *ngIf="showTimePicker" class="time-picker">
+          <timepicker
+            formControlName="taskEndTime"
+            [showMeridian]="false"
+          ></timepicker>
+          <div class="time-actions">
+            <button mat-button class="clear-time" (click)="clearTime()">
+              Clear
+            </button>
+            <button
+              mat-button
+              class="toggle-time-btn"
+              (click)="toggleTimePicker()"
+            >
+             Cancel
+            </button>
+          </div>
+        </div> -->
+      </div>
+      <div class="extra-actions">
+        <h3 class="subheading-date-time">Actions:</h3>
+        <mat-form-field>
+          <mat-label>Set Priority</mat-label>
+          <mat-select formControlName="priority">
+            <mat-option
+              [value]="level.value"
+              *ngFor="let level of priorityLevels"
+              >{{ level.name }}</mat-option
+            >
+          </mat-select>
+        </mat-form-field>
+        <p class="slide-toggle">
+          <mat-slide-toggle formControlName="reminder"
+            >Set Reminder</mat-slide-toggle
+          >
+        </p>
+        <p class="slide-toggle">
+          <mat-slide-toggle
+            formControlName="isRecurring"
+            (change)="toggleReurring()"
+            >Is it recurring?</mat-slide-toggle
+          >
+        </p>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button cdkFocusInitial *ngIf="!data" (click)="addTask()">
+    Add
+  </button>
+  <button mat-button cdkFocusInitial [disabled]="!dataChanged" *ngIf="data" (click)="saveData()">
+    Save
+  </button>
+</mat-dialog-actions>

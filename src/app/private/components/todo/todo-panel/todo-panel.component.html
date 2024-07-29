@@ -1,1 +1,11 @@
-<p>todo-panel works!</p>
+<div class="content" *ngIf="panelItems">
+  <ng-content></ng-content>
+  <div class="panelAction" *ngFor="let item of panelItems">
+    <a
+      class="side-link"
+      (click)="sendAction(item)"
+      title="{{ item.tooltip }}"
+      >{{ item.name }}</a
+    >
+  </div>
+</div>

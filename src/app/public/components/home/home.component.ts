@@ -18,7 +18,7 @@ export class HomeComponent implements OnInit {
       this.authService.isUserLoggedIn$.subscribe({
         next: (status: boolean) => {
           if (status || this.authService.isAuthenticated()) {
-            this.router.navigateByUrl('todo')
+            this.router.navigateByUrl('/todo/inbox')
             return;
           }
         },

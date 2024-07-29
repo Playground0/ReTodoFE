@@ -1,15 +1,21 @@
-<div class="container" *ngIf="config$">
+<div class="content" *ngIf="config$">
   <span class="title"> {{ config$.formName | titlecase }} </span>
   <form class="form" [formGroup]="form">
     <div *ngFor="let control of config$.controls">
       <mat-form-field class="full-width">
-        <mat-label>{{ control.controlLabel| titlecase }}:</mat-label>
+        <mat-label>{{ control.controlLabel | titlecase }}:</mat-label>
         <input
           *ngIf="control.controlType === 'text'"
           matInput
           [placeholder]="control.controlName | titlecase"
           [formControlName]="control.controlName"
         />
+        <textarea
+          matInput
+          *ngIf="control.controlType === 'textarea'"
+          [placeholder]="control.controlName"
+          [formControlName]="control.controlName"
+        ></textarea>
         <input
           *ngIf="control.controlType === 'email'"
           matInput
@@ -66,10 +72,16 @@
     color="primary"
   >
     <div [ngSwitch]="btn">
-      <div *ngSwitchCase="'login'" class="icon-btn"><mat-icon>login</mat-icon></div>
-      <div *ngSwitchCase="'register'" class="icon-btn"><mat-icon>person_add</mat-icon></div>
-      <div *ngSwitchCase="'reset password'" class="icon-btn"><mat-icon>lock</mat-icon></div>
-      <div *ngSwitchDefault class="name-btn">{{ btn| titlecase }}</div>
+      <div *ngSwitchCase="'login'" class="icon-btn">
+        <mat-icon>login</mat-icon>
+      </div>
+      <div *ngSwitchCase="'register'" class="icon-btn">
+        <mat-icon>person_add</mat-icon>
+      </div>
+      <div *ngSwitchCase="'reset password'" class="icon-btn">
+        <mat-icon>lock</mat-icon>
+      </div>
+      <div *ngSwitchDefault class="name-btn">{{ btn | titlecase }}</div>
     </div>
   </button>
 </div>

@@ -1,0 +1,82 @@
+@import "../../../../../../styles.scss";
+
+h2 {
+  text-align: start;
+  font-weight: bold;
+  
+}
+
+.dialog-header-section{
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 2rem 2rem 0 1rem;
+
+  .dialog-title{
+    padding: 0 1rem;
+    color: $text-color;
+  }
+  .delete-btn-icon{
+    color: $button-color-warn;
+    font-size: 20px;
+    margin: 0;
+  }
+  
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+
+  .subheading-date-time {
+    display: flex;
+    color: $text-color;
+  }
+  .more-task-details {
+    display: flex;
+    justify-content: space-evenly;
+
+    .date-time-picker {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      flex-direction: column;
+
+      .toggle-time-btn {
+        background-color: $button-color;
+        border-radius: 20px;
+      }
+
+      .clear-time {
+        background-color: $button-color-warn;
+        border-radius: 20px;
+        color: white;
+      }
+
+      .time-picker {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        flex-direction: column;
+
+        .time-actions{
+          display: flex;
+          gap: 1rem;
+        }
+      }
+    }
+    .slide-toggle {
+      display: flex;
+    }
+  }
+}
+
+.warn-btn {
+  background-color: $button-color-warn;
+  border-radius: 20px;
+  color: white;
+}
+
+.delete-btn-icon:hover{
+  color: black;
+}
