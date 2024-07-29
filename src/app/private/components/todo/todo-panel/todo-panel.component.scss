@@ -1,0 +1,20 @@
+@import '../../../../../styles.scss';
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: $background-color;
+
+  .panelAction {
+    padding: 1rem;
+    font-size: 20px;
+    .side-link {
+      color: $background-color;
+      cursor: pointer;
+    }
+    .side-link:hover{
+      color: black;
+    }
+  }
+}

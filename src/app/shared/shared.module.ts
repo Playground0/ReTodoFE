@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { CustomFormComponent } from './components/custom-form/custom-form.component';
+import { DateService } from './service/date.service';
 
 @NgModule({
   declarations: [HeaderComponent, FooterComponent, CustomFormComponent],
@@ -23,6 +24,7 @@ import { CustomFormComponent } from './components/custom-form/custom-form.compon
     MatInputModule,
     MatIconModule,
   ],
+  providers: [DateService],
   exports: [HeaderComponent, FooterComponent, CustomFormComponent],
 })
 export class SharedModule {}

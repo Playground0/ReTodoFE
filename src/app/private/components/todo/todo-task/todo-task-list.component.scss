@@ -1,0 +1,69 @@
+@import "../../../../../styles.scss";
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1rem 4rem;
+  min-height: 100%;
+  color: $background-color;
+}
+
+.top-section {
+  display: flex;
+  min-width: 100%;
+  justify-content: space-between;
+  border-bottom: 1px solid;
+  padding-bottom: 5px;
+  margin-bottom: 2rem;
+
+  h2 {
+    margin-bottom: 0;
+  }
+
+  .title-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.task-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+  min-width: 97.52%;
+  color: $text-color;
+
+  .task {
+    background-color: $background-color;
+    padding: 1rem;
+    min-width: 100%;
+    display: flex;
+    align-items: center;
+    box-shadow: $default-shadow;
+    cursor: pointer;
+    border-radius: 20px;
+    justify-content: space-between;
+    transition: 0.5s;
+  }
+  .task:hover {
+    background-color: $secondary-color;
+    color: $background-color;
+    border: 1px solid $background-color;
+  }
+}
+
+.add-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  color: $background-color;
+  font-size: large;
+}
+
+.add-btn:hover {
+  color: black;
+}

@@ -6,13 +6,19 @@ import { UserProfilePageComponent } from './components/user/user-profile-page/us
 import { TodoComponent } from './components/todo/todo.component';
 
 const routes: Routes = [
-  { path: '', component: TodoComponent, canActivate: [authGuard] },
-  { path: 'profile', component: UserProfilePageComponent, canActivate: [authGuard]},
+  {path:'', component: TodoComponent, canActivate:[authGuard]},
   {
     path: 'statistics',
     component: UserStatisticPageComponent,
     canActivate: [authGuard],
   },
+  {
+    path: 'profile',
+    component: UserProfilePageComponent,
+    canActivate: [authGuard],
+  },
+  {path:':panelLink', component: TodoComponent, canActivate:[authGuard]},
+  {path:'list/:panelLink', component: TodoComponent, canActivate:[authGuard]},
 ];
 
 @NgModule({

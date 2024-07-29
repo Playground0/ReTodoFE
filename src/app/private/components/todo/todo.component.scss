@@ -1,0 +1,59 @@
+@import "../../../../styles.scss";
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  margin: 0 4rem;
+  gap: 2rem;
+
+  .top-section {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    gap: 4rem;
+
+    .panel-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+
+      .panel {
+        background-color: $primary-color;
+        box-shadow: $default-shadow;
+        border-radius: 0 0 20px 20px;
+        min-height: 30vh;
+      }
+
+      .user-list-panel {
+        border-radius: 20px;
+
+        .list-title {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 2rem;
+          font-size: x-small;
+
+          .title-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+
+    .task-section {
+      background-color: $secondary-color;
+      border-radius: 0 0 20px 20px;
+      box-shadow: $default-shadow;
+    }
+  }
+
+  .bottom-section {
+    padding: 2rem;
+    background-color: $background-color;
+    box-shadow: $default-shadow;
+    border-radius: 20px;
+  }
+}
