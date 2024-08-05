@@ -21,6 +21,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import { DateOverduePipe } from './pipes/date-overdue.pipe';
 
 @NgModule({
   declarations: [
@@ -31,6 +33,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     TodoComponent,
     TodoActionsComponent,
     TaskEditorDialogComponent,
+    DateOverduePipe,
   ],
   imports: [
     CommonModule,
@@ -47,6 +50,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     MatSelectModule,
     MatSlideToggleModule,
     MatSnackBarModule,
+    MatTooltipModule,
   ],
   providers:[{provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: false}}]
 })

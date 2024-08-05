@@ -1,7 +1,9 @@
 <div class="dialog-header-section">
   <h2 class="dialog-title" *ngIf="!data" mat-dialog-title>Add Task</h2>
   <h2 class="dialog-title" *ngIf="data" mat-dialog-title>Task Details</h2>
-  <button mat-button *ngIf="data" (click)="deleteTask()"><mat-icon class="delete-btn-icon">delete</mat-icon></button>
+  <button mat-button *ngIf="data" (click)="deleteTask()">
+    <mat-icon class="delete-btn-icon">delete</mat-icon>
+  </button>
 </div>
 <mat-dialog-content>
   <form class="form" [formGroup]="taskForm">
@@ -18,18 +20,35 @@
     <div class="more-task-details">
       <div class="date-time-picker">
         <h3 class="subheading-date-time">Choose date and time:</h3>
-        <mat-form-field class="example-full-width">
+        <mat-form-field class="example-full-width" *ngIf="!isRecurring">
           <mat-label>End Date</mat-label>
           <input
             matInput
             [matDatepicker]="picker"
             formControlName="taskEndDate"
+            [min]="minDate"
           />
           <mat-datepicker-toggle
             matIconSuffix
             [for]="picker"
           ></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="example-full-width" *ngIf="isRecurring">
+          <mat-label>Enter a date range</mat-label>
+          <mat-date-range-input [rangePicker]="picker" [min]="minDate">
+            <input
+              matStartDate
+              formControlName="taskStartDate"
+              placeholder="Start date"
+            />
+            <input matEndDate formControlName="taskEndDate" placeholder="End date"  />
+          </mat-date-range-input>
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
         </mat-form-field>
         <!-- <button
           class="toggle-time-btn"
@@ -75,7 +94,7 @@
             >Set Reminder</mat-slide-toggle
           >
         </p>
-        <p class="slide-toggle">
+        <p *ngIf="!data || (data && !data.isRecurring)" class="slide-toggle">
           <mat-slide-toggle
             formControlName="isRecurring"
             (change)="toggleReurring()"
@@ -91,7 +110,13 @@
   <button mat-button cdkFocusInitial *ngIf="!data" (click)="addTask()">
     Add
   </button>
-  <button mat-button cdkFocusInitial [disabled]="!dataChanged" *ngIf="data" (click)="saveData()">
+  <button
+    mat-button
+    cdkFocusInitial
+    [disabled]="!dataChanged"
+    *ngIf="data"
+    (click)="saveData()"
+  >
     Save
   </button>
 </mat-dialog-actions>
