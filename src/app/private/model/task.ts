@@ -23,6 +23,7 @@ export interface ITaskCreate {
   previousListID: string;
   userId: string;
   taskTitle: string;
+  taskStartDate: string,
   taskEndDate: string;
   taskDesc: string;
   occurance: string;
