@@ -4,9 +4,9 @@ import { PrivateCommonService } from '../../services/private-common.service';
 import { IUser } from 'src/app/core/model/auth-page.model';
 import { ITask, ITaskCreate, ITaskUpdate } from '../../model/task';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, tap } from 'rxjs';
 import { LocalDataService } from 'src/app/core/services/localdata.service';
-import { IDialogData, ITaskUI } from '../../model/UI/task-ui';
+import { IDialogData } from '../../model/UI/task-ui';
 import { MatDialog } from '@angular/material/dialog';
 import { TaskAPIService } from '../../services/task-api.service';
 import {
@@ -112,7 +112,7 @@ export class TodoComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.taskApiService.getTasks(userId, link).subscribe({
         next: (res: ITask[]) => {
-          this.tasks = res;
+          this.tasks = res.sort(this.compareTasks);
         },
       })
     );
@@ -129,7 +129,7 @@ export class TodoComponent implements OnInit, OnDestroy {
     const data: unknown = dialogData.data;
     switch (dialogData.action) {
       case TaskActions.Add:
-        this.addTask(data as ITaskUI);
+        this.addTask(data as ITask);
         break;
       case TaskActions.Update:
         this.updateTask(data as ITask);
@@ -146,7 +146,7 @@ export class TodoComponent implements OnInit, OnDestroy {
   }
 
   //TODO: update it for list id
-  private addTask(task: ITaskUI) {
+  private addTask(task: ITask) {
     const user: IUser = this.localData.localUserData as IUser;
     let newTask: ITaskCreate = {
       userId: user.id,
@@ -154,20 +154,18 @@ export class TodoComponent implements OnInit, OnDestroy {
       previousListID: '0',
       taskTitle: task.taskTitle,
       taskDesc: task.taskDesc,
-      taskEndDate: task.taskEndDate
-        ? this.dateService.getStartOfDayUTC(task.taskEndDate)
-        : '',
+      taskStartDate: this.setupStartOfTheDay(task.taskStartDate),
+      taskEndDate: this.setupStartOfTheDay(task.taskEndDate),
       occurance: task.occurance,
       priority: task.priority,
       reminder: task.reminder ? true : false,
       isRecurring: task.isRecurring ? true : false,
     };
     this.subscription.add(
-      this.taskApiService.creteTask(newTask).subscribe({
-        next: (res: ITask) => {
-          this.refreshCurrentList();
-        },
-      })
+      this.taskApiService
+        .creteTask(newTask)
+        .pipe(tap(() => this.refreshCurrentList()))
+        .subscribe()
     );
   }
 
@@ -178,21 +176,20 @@ export class TodoComponent implements OnInit, OnDestroy {
       previousListID: data.previousListID,
       userId: data.userId,
       taskTitle: data.taskTitle,
-      taskStartDate: data.taskStartDate,
-      taskEndDate: data.taskEndDate
-        ? this.dateService.getStartOfDayUTC(data.taskEndDate)
-        : '',
+      taskStartDate: this.setupStartOfTheDay(data.taskStartDate),
+      taskEndDate: this.setupStartOfTheDay(data.taskEndDate),
       taskDesc: data.taskDesc,
       occurance: data.occurance,
       priority: data.priority,
       reminder: data.reminder,
       isRecurring: data.isRecurring,
     };
-    this.taskApiService.updateTask(updateTask).subscribe({
-      next: (res: ITask) => {
-        this.refreshCurrentList();
-      },
-    });
+    this.subscription.add(
+      this.taskApiService
+        .updateTask(updateTask)
+        .pipe(tap(() => this.refreshCurrentList()))
+        .subscribe()
+    );
   }
 
   private deleteTask(taskId: string) {
@@ -235,27 +232,45 @@ export class TodoComponent implements OnInit, OnDestroy {
     };
     this._snackBar.open(message, TaskActions.Undo, config);
     const snackBar = this._snackBar._openedSnackBarRef;
-    snackBar?.afterDismissed().subscribe({
-      next: (res) => {
-        if (res.dismissedByAction) {
-          this.undoTask(taskId, action);
-        }
-      },
-    });
+    this.subscription.add(
+      snackBar?.afterDismissed().subscribe({
+        next: (res) => {
+          if (res.dismissedByAction) {
+            this.undoTask(taskId, action);
+          }
+        },
+      })
+    );
   }
 
   private undoTask(taskId: string, taskAction: TaskActions) {
-    this.taskApiService
-      .undoTaskAction(taskId, this.userId, taskAction)
-      .subscribe({
-        next: (res) => {
-          this.refreshCurrentList();
-        },
-      });
+    this.subscription.add(
+      this.taskApiService
+        .undoTaskAction(taskId, this.userId, taskAction)
+        .pipe(tap(() => this.refreshCurrentList()))
+        .subscribe()
+    );
   }
 
   private refreshCurrentList = () =>
     this.getTasks(this.userId, this.currentPanel);
+
+  private compareTasks(a: ITask, b: ITask): number {
+    const dateA = new Date(a.taskEndDate).getTime();
+    const dateB = new Date(b.taskEndDate).getTime();
+
+    // Compare dates
+    if (dateA !== dateB) {
+      return dateA - dateB; // Ascending order for dates
+    }
+
+    // If dates are the same, compare by priority in descending order
+    return b.priority - a.priority; // Descending order for priority
+  }
+
+  private setupStartOfTheDay(date: string) {
+    return date ? this.dateService.getStartOfDay(date) : '';
+  }
 
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();

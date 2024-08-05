@@ -14,6 +14,7 @@ import {
   TaskActions,
 } from 'src/app/private/model/UI/tasks.contanst';
 import { IDialogData, ITaskUI } from 'src/app/private/model/UI/task-ui';
+import { DateService } from 'src/app/shared/service/date.service';
 
 @Component({
   selector: 'app-task-editor-dialog',
@@ -23,39 +24,41 @@ import { IDialogData, ITaskUI } from 'src/app/private/model/UI/task-ui';
 //TODO: Refactor the whole component
 export class TaskEditorDialogComponent implements OnInit {
   taskForm!: FormGroup;
-  maxDate = '2014-05-29T08:30';
+  isRecurring = false
+  minDate = '';
   showTimePicker = false;
   priorityLevels = [
     {
-      value: 0,
+      value: 1,
       name: 'Low',
     },
     {
-      value: 1,
+      value: 2,
       name: 'Normal',
     },
     {
-      value: 2,
+      value: 3,
       name: 'High',
     },
     {
-      value: 3,
+      value: 4,
       name: 'Urgent',
     },
   ];
   reminder = false;
-  data!: ITask | ITaskUI | string | undefined;
+  data!: ITask | undefined;
   dataChanged: boolean = false;
   initialFormData: any;
 
   constructor(
     public dialogRef: MatDialogRef<TaskEditorDialogComponent>,
-    private fb: FormBuilder,
+    private fb: FormBuilder, private dateService : DateService,
     @Inject(MAT_DIALOG_DATA) public dialogData: IDialogData
   ) {
     this.taskForm = this.fb.group({
       taskTitle: ['', [Validators.required]],
       taskDesc: [''],
+      taskStartDate: [''],
       taskEndDate: [''],
       taskEndTime: [''],
       priority: [''],
@@ -63,8 +66,9 @@ export class TaskEditorDialogComponent implements OnInit {
       isRecurring: [false],
       occurance: [''],
     });
+    this.minDate = this.dateService.getStartOfDay()
 
-    this.data = this.dialogData.data;
+    this.data = this.dialogData.data as ITask;
 
     if (dialogData.panel === DefaultPanels.Today) {
       const today = dayjs().toISOString();
@@ -80,6 +84,7 @@ export class TaskEditorDialogComponent implements OnInit {
       const newData = this.data as ITask;
       this.taskForm.get('taskTitle')?.setValue(newData.taskTitle);
       this.taskForm.get('taskDesc')?.setValue(newData.taskDesc);
+      this.taskForm.get('taskStartDate')?.setValue(newData.taskStartDate)
       this.taskForm.get('taskEndDate')?.setValue(newData.taskEndDate);
       this.taskForm.get('taskEndTime')?.setValue('');
       this.taskForm.get('priority')?.setValue(newData.priority);
@@ -120,13 +125,14 @@ export class TaskEditorDialogComponent implements OnInit {
   }
 
   toggleReurring() {
-    //TODO: implememt Recurring feature
+      this.isRecurring = !this.isRecurring
   }
 
   saveData() {
     const updateData = this.data as ITask;
     updateData.taskTitle = this.taskForm.get('taskTitle')?.value;
     updateData.taskDesc = this.taskForm.get('taskDesc')?.value;
+    updateData.taskStartDate = this.taskForm.get('taskStartDate')?.value;
     updateData.taskEndDate = this.taskForm.get('taskEndDate')?.value;
     updateData.priority = this.taskForm.get('priority')?.value;
     updateData.reminder = this.taskForm.get('reminder')?.value;

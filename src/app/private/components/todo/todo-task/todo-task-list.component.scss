@@ -28,30 +28,47 @@
   }
 }
 
-.task-section {
+.main-section {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   align-items: flex-start;
   min-width: 97.52%;
   color: $text-color;
+  // border: 1px solid $primary-color;
 
-  .task {
+  .task-section {
     background-color: $background-color;
-    padding: 1rem;
+    padding: 0.5rem 1rem;
     min-width: 100%;
     display: flex;
     align-items: center;
     box-shadow: $default-shadow;
     cursor: pointer;
     border-radius: 20px;
-    justify-content: space-between;
     transition: 0.5s;
+    justify-content: space-between;
+
+    .task-details {
+      display: flex;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0;
+      // min-width: 100%;
+
+      .task-details-section {
+        display: flex;
+        gap: 2rem;
+        margin-left: 3rem;
+        align-items: center;
+      }
+    }
   }
-  .task:hover {
-    background-color: $secondary-color;
+  .task-section:hover {
+    background-color: $primary-color;
     color: $background-color;
-    border: 1px solid $background-color;
+    // border: 1px solid $background-color;
+    box-shadow: $default-shadow;
   }
 }
 
@@ -62,8 +79,16 @@
   font-weight: bold;
   color: $background-color;
   font-size: large;
+  margin-top: 1rem;
 }
 
 .add-btn:hover {
   color: black;
+}
+
+.overdue {
+  color: #d32f2f;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
