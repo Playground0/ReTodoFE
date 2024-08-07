@@ -16,6 +16,7 @@ import {
 } from '../../model/UI/tasks.contanst';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { DateService } from 'src/app/shared/service/date.service';
+import { ListApiService } from '../../services/list-api.service';
 
 @Component({
   selector: 'app-todo',
@@ -82,7 +83,8 @@ export class TodoComponent implements OnInit, OnDestroy {
     private localData: LocalDataService,
     public dialog: MatDialog,
     private _snackBar: MatSnackBar,
-    private dateService: DateService
+    private dateService: DateService,
+    private listService: ListApiService
   ) {}
 
   public ngOnInit(): void {
@@ -97,7 +99,8 @@ export class TodoComponent implements OnInit, OnDestroy {
         }
       })
     );
-    console.log('Server time zone:', new Date().getTimezoneOffset());
+
+    this.refreshUserLists()
   }
 
   public panelAction(title: string) {
@@ -255,6 +258,10 @@ export class TodoComponent implements OnInit, OnDestroy {
   private refreshCurrentList = () =>
     this.getTasks(this.userId, this.currentPanel);
 
+  private refreshUserLists = () => {
+    this.getList(this.userId)
+  }
+
   private compareTasks(a: ITask, b: ITask): number {
     const dateA = new Date(a.taskEndDate).getTime();
     const dateB = new Date(b.taskEndDate).getTime();
@@ -270,6 +277,27 @@ export class TodoComponent implements OnInit, OnDestroy {
 
   private setupStartOfTheDay(date: string) {
     return date ? this.dateService.getStartOfDay(date) : '';
+  }
+
+  private getList(userId: string){
+    this.subscription.add(
+      this.listService.getAll(userId).subscribe({
+        next: (res: any[]) => {
+          this.userLists = res.map((list) => {
+            return {
+              name: list.listTitle,
+              link: list._id,
+              tooltip: list.listTitle
+            }
+          })
+          console.log(this.userLists)
+        }
+      })
+    )
+  }
+
+  public addNewList(){
+
   }
 
   public ngOnDestroy(): void {

@@ -10,10 +10,8 @@
       <div class="panel user-list-panel">
         <app-todo-panel [panelItems]="userLists" (action)="panelAction($event)">
           <div class="list-title">
-            <h2>
-              <h2>My Projects ({{ userLists.length }}/5)</h2>
-            </h2>
-            <button class="title-btn"><mat-icon>library_add</mat-icon></button>
+              <span>My Lists ({{ userLists.length }}/5)</span>
+            <button class="title-btn" (click)="addNewList()" ><mat-icon>library_add</mat-icon></button>
           </div>
         </app-todo-panel>
       </div>

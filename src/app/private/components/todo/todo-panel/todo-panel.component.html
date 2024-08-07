@@ -1,11 +1,10 @@
 <div class="content" *ngIf="panelItems">
   <ng-content></ng-content>
-  <div class="panelAction" *ngFor="let item of panelItems">
-    <a
+  <div (click)="sendAction(item)" class="panelAction" *ngFor="let item of panelItems">
+    <span
       class="side-link"
-      (click)="sendAction(item)"
       title="{{ item.tooltip }}"
-      >{{ item.name }}</a
+      >{{ item.name }}</span
     >
   </div>
 </div>

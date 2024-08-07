@@ -17,7 +17,7 @@ import { APIStatusMessage, IAPIResponse } from 'src/app/shared/model/basic-api.m
 })
 //TODO: Refactor the whole service
 export class AuthService {
-  isLocalHost: boolean = false;
+  isLocalHost: boolean = true;
   apiUrl: string = this.isLocalHost
     ? 'http://localhost:8000/api/v1'
     : 'https://retodobe.onrender.com/api/v1';
