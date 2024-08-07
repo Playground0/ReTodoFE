@@ -1,3 +1,29 @@
 <div class="content">
-    <span>Todo actions</span>
+  <div class="action-box pomodoro" (click)="startPomodoro()">
+    <!-- <mat-icon style="color: black">timer</mat-icon> -->
+    <div class="text-image-group">
+      <img
+        src="../../../../../assets/pomodoro-icon.png"
+        alt=""
+        width="65px"
+        height="auto"
+      />
+      <span>Start pomodoro</span>
+    </div>
+
+    <mat-icon matTooltip="Pomodoro info">info</mat-icon>
+  </div>
+  <div class="action-box task-analysis" (click)="showAnalytics()">
+    <div class="text-image-group">
+      <mat-icon matTooltip="Info">info</mat-icon>
+      <span>Check your progress</span>
+      <!-- <mat-icon>timeline</mat-icon> -->
+    </div>
+    <img
+      src="../../../../../assets/progress-icon.png"
+      alt=""
+      width="80px"
+      height="auto"
+    />
+  </div>
 </div>

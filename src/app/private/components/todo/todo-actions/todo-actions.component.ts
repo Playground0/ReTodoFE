@@ -7,4 +7,11 @@ import { Component } from '@angular/core';
 })
 export class TodoActionsComponent {
 
+  startPomodoro(){
+    console.log('Start Pomodoro')
+  }
+
+  showAnalytics(){
+    console.log('Analytics Data')
+  }
 }
