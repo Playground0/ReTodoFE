@@ -1,0 +1,53 @@
+@import "../../../../../styles.scss";
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 1rem;
+  gap: 2rem;
+  border: 3px solid $secondary-color;
+  border-radius: 20px;
+
+  .action-box {
+    background-color: lightgray;
+    padding: 1rem 2rem;
+    gap: 1rem;
+    border-radius: 20px;
+    font-size: 25px;
+    cursor: pointer;
+    color: $text-color;
+    transition: 0.7s;
+    box-shadow: $default-shadow;
+
+    .text-image-group {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
+
+  .pomodoro {
+    // background-color: $pomodoro-background-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .task-analysis {
+    // background-color: $task-analytics-background-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .pomodoro:hover {
+    background-color: $pomodoro-background-color;
+    color: #ffff;
+  }
+
+  .task-analysis:hover {
+    background-color: $task-analytics-background-color;
+    color: #ffff;
+  }
+}
