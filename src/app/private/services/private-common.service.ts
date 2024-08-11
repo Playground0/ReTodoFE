@@ -8,7 +8,7 @@ export class PrivateCommonService {
 
   constructor(private localDataService: LocalDataService) { }
 
-  public getUserData(){
+  public getUserData() {
     return this.localDataService.localUserData;
   }
 }

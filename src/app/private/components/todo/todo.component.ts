@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { IPanelLink } from '../../model/UI/panel-info';
 import { PrivateCommonService } from '../../services/private-common.service';
 import { IUser } from 'src/app/core/model/auth-page.model';
-import { ITask, ITaskCreate, ITaskUpdate } from '../../model/task';
+import { ITask, ITaskCreate, ITaskUpdate } from '../../model/task.model';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, tap } from 'rxjs';
 import { LocalDataService } from 'src/app/core/services/localdata.service';
@@ -16,6 +16,9 @@ import {
 } from '../../model/UI/tasks.contanst';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { DateService } from 'src/app/shared/service/date.service';
+import { ListApiService } from '../../services/list-api.service';
+import { IList, IListCreate } from '../../model/list.model';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-todo',
@@ -29,6 +32,8 @@ export class TodoComponent implements OnInit, OnDestroy {
   public listTitle: string = '';
   private subscription = new Subscription();
   public currentPanel!: DefaultPanels;
+  public showListForm = false;
+  private isDefaultList = false;
 
   //TODO: Add this to app configuation endpoint
   private panelDefaultItems: IPanelLink[] = [
@@ -36,21 +41,25 @@ export class TodoComponent implements OnInit, OnDestroy {
       name: 'Search',
       link: 'search',
       tooltip: 'Search task',
+      isDefaultList: true,
     },
     {
       name: 'Inbox',
       link: 'inbox',
       tooltip: 'Show Inbox',
+      isDefaultList: true,
     },
     {
       name: `Today's Task`,
       link: 'today',
       tooltip: `Show today tasks`,
+      isDefaultList: true,
     },
     {
       name: 'Upcoming Task',
       link: 'upcoming',
       tooltip: 'Show Upcoming Task',
+      isDefaultList: true,
     },
     // {
     //   name: `Completed Task`,
@@ -74,6 +83,8 @@ export class TodoComponent implements OnInit, OnDestroy {
   public userLists: IPanelLink[] = [];
 
   private snackBarDurationInSeconds = 5;
+  public listForm: FormGroup;
+  isCreatingList = false;
 
   constructor(
     private commonService: PrivateCommonService,
@@ -82,22 +93,36 @@ export class TodoComponent implements OnInit, OnDestroy {
     private localData: LocalDataService,
     public dialog: MatDialog,
     private _snackBar: MatSnackBar,
-    private dateService: DateService
-  ) {}
+    private dateService: DateService,
+    private listService: ListApiService,
+    private fb: FormBuilder
+  ) {
+    this.listForm = this.fb.group({
+      listTitle: [''],
+    });
+  }
 
   public ngOnInit(): void {
     this.userId = this.getUserData();
+    this.refreshUserLists();
     this.subscription.add(
       this.route.params.subscribe((route) => {
         this.tasks = [];
         this.currentPanel = route['panelLink'];
+        this.isDefaultList = [
+          DefaultPanels.Inbox,
+          DefaultPanels.Search,
+          DefaultPanels.Today,
+          DefaultPanels.Upcoming,
+        ].includes(this.currentPanel);
         if (!this.listTitle) this.setupListTitle(this.currentPanel);
-        if (this.currentPanel !== DefaultPanels.Search) {
+        if (!this.isDefaultList) {
+          this.refreshUserListTask();
+        } else if (this.currentPanel !== DefaultPanels.Search) {
           this.refreshCurrentList();
         }
       })
     );
-    console.log('Server time zone:', new Date().getTimezoneOffset());
   }
 
   public panelAction(title: string) {
@@ -119,7 +144,12 @@ export class TodoComponent implements OnInit, OnDestroy {
   }
 
   private setupListTitle(link: string) {
-    const item = this.panelDefaultItems.find((item) => item.link === link);
+    let item: any = {};
+    if (this.isDefaultList) {
+      item = this.panelDefaultItems.find((item) => item.link === link);
+    } else {
+      item = this.userLists.find((item) => item.link === link);
+    }
     if (item) {
       this.listTitle = item.name;
     }
@@ -148,9 +178,10 @@ export class TodoComponent implements OnInit, OnDestroy {
   //TODO: update it for list id
   private addTask(task: ITask) {
     const user: IUser = this.localData.localUserData as IUser;
+    const isDefaultPanel = this.isDefaultList;
     let newTask: ITaskCreate = {
       userId: user.id,
-      currentListId: '0',
+      currentListId: !isDefaultPanel ? this.currentPanel : '0',
       previousListID: '0',
       taskTitle: task.taskTitle,
       taskDesc: task.taskDesc,
@@ -164,7 +195,15 @@ export class TodoComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.taskApiService
         .creteTask(newTask)
-        .pipe(tap(() => this.refreshCurrentList()))
+        .pipe(
+          tap(() => {
+            if (this.isDefaultList) {
+              this.refreshCurrentList();
+            } else {
+              this.refreshUserListTask();
+            }
+          })
+        )
         .subscribe()
     );
   }
@@ -187,7 +226,15 @@ export class TodoComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.taskApiService
         .updateTask(updateTask)
-        .pipe(tap(() => this.refreshCurrentList()))
+        .pipe(
+          tap(() => {
+            if (this.isDefaultList) {
+              this.refreshCurrentList();
+            } else {
+              this.refreshUserListTask();
+            }
+          })
+        )
         .subscribe()
     );
   }
@@ -196,7 +243,12 @@ export class TodoComponent implements OnInit, OnDestroy {
     this.taskApiService.deleteTask(this.userId, taskId).subscribe({
       next: (res: boolean | null) => {
         if (res) {
-          this.refreshCurrentList();
+          if (this.isDefaultList) {
+            this.refreshCurrentList();
+          } else {
+            this.refreshUserListTask();
+          }
+
           this.openUndoSnackBar(
             taskId,
             TaskActions.Delete,
@@ -211,7 +263,11 @@ export class TodoComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.taskApiService.markAsCompleteTask(data._id, this.userId).subscribe({
         next: (res) => {
-          this.refreshCurrentList();
+          if (this.isDefaultList) {
+            this.refreshCurrentList();
+          } else {
+            this.refreshUserListTask();
+          }
           this.openUndoSnackBar(
             data._id,
             TaskActions.Complete,
@@ -247,13 +303,31 @@ export class TodoComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.taskApiService
         .undoTaskAction(taskId, this.userId, taskAction)
-        .pipe(tap(() => this.refreshCurrentList()))
+        .pipe(
+          tap(() => {
+            if (this.isDefaultList) {
+              this.refreshCurrentList();
+            } else {
+              this.refreshUserListTask();
+            }
+          })
+        )
         .subscribe()
     );
   }
 
-  private refreshCurrentList = () =>
+  private refreshCurrentList = () => {
     this.getTasks(this.userId, this.currentPanel);
+  };
+
+  private refreshUserLists = () => this.getLists(this.userId);
+
+  private refreshUserListTask = () => this.getTasksForList(this.currentPanel);
+
+  public hardRefreshPanel = () => {
+    this.refreshUserLists();
+    this.refreshCurrentList();
+  };
 
   private compareTasks(a: ITask, b: ITask): number {
     const dateA = new Date(a.taskEndDate).getTime();
@@ -270,6 +344,55 @@ export class TodoComponent implements OnInit, OnDestroy {
 
   private setupStartOfTheDay(date: string) {
     return date ? this.dateService.getStartOfDay(date) : '';
+  }
+
+  private getLists(userId: string) {
+    this.subscription.add(
+      this.listService.getAll(userId).subscribe({
+        next: (res: IList[]) => {
+          this.userLists = res.map((list) => {
+            return {
+              name: list.listTitle,
+              link: list._id,
+              tooltip: list.listTitle,
+              isDefaultList: false,
+            };
+          });
+          this.setupListTitle(this.currentPanel);
+        },
+      })
+    );
+  }
+
+  public toggleListForm() {
+    this.showListForm = !this.showListForm;
+    if (!this.showListForm) this.listForm.reset();
+  }
+
+  public addNewLIst() {
+    const newList: IListCreate = this.listForm.value;
+    newList.userId = this.userId;
+    this.subscription.add(
+      this.listService
+        .createList(newList)
+        .pipe(
+          tap(() => {
+            this.refreshUserLists();
+            this.toggleListForm();
+          })
+        )
+        .subscribe()
+    );
+  }
+
+  public getTasksForList(listId: string) {
+    this.subscription.add(
+      this.taskApiService.getCustomListTask(this.userId, listId).subscribe({
+        next: (res) => {
+          this.tasks = res.sort(this.compareTasks);
+        },
+      })
+    );
   }
 
   public ngOnDestroy(): void {

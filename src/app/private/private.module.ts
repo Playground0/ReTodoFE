@@ -23,6 +23,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { DateOverduePipe } from './pipes/date-overdue.pipe';
+import {MatMenuModule} from '@angular/material/menu';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { DateOverduePipe } from './pipes/date-overdue.pipe';
     MatSlideToggleModule,
     MatSnackBarModule,
     MatTooltipModule,
+    MatMenuModule
   ],
   providers:[{provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: false}}]
 })

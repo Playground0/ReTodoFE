@@ -8,7 +8,7 @@ import {
 import { MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import * as dayjs from 'dayjs';
-import { ITask } from 'src/app/private/model/task';
+import { ITask } from 'src/app/private/model/task.model';
 import {
   DefaultPanels,
   TaskActions,
