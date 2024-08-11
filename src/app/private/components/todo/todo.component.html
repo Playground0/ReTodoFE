@@ -8,12 +8,45 @@
         ></app-todo-panel>
       </div>
       <div class="panel user-list-panel">
-        <app-todo-panel [panelItems]="userLists" (action)="panelAction($event)">
+        <app-todo-panel
+          [panelItems]="userLists"
+          (action)="panelAction($event)"
+          (refreshUserLists)="hardRefreshPanel()"
+        >
           <div class="list-title">
-            <h2>
-              <h2>My Projects ({{ userLists.length }}/5)</h2>
-            </h2>
-            <button class="title-btn"><mat-icon>library_add</mat-icon></button>
+            <button
+              mat-icon-button
+              class="title-btn"
+              matTooltip="Add List"
+              (click)="toggleListForm()"
+            >
+              <mat-icon>library_add</mat-icon>
+            </button>
+            <span>My Lists</span>
+          </div>
+          <div>
+            <form
+              class="new-list-form"
+              *ngIf="showListForm"
+              (ngSubmit)="addNewLIst()"
+              [formGroup]="listForm"
+              action=""
+            >
+              <mat-form-field>
+                <mat-label>Title</mat-label>
+                <input matInput type="text" formControlName="listTitle" />
+                <button
+                  class="add-list-btn"
+                  mat-button
+                  matSuffix
+                  type="submit"
+                  (click)="$event.stopPropagation()"
+                  [disabled]="isCreatingList"
+                >
+                  <mat-icon>add</mat-icon>
+                </button>
+              </mat-form-field>
+            </form>
           </div>
         </app-todo-panel>
       </div>

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { AuthService } from 'src/app/core/services/auth.service';
-import { ITask, ITaskCreate, ITaskUpdate } from '../model/task';
+import { ITask, ITaskCreate, ITaskUpdate } from '../model/task.model';
 import {
   APIStatusMessage,
   IAPIResponse,
@@ -91,6 +91,13 @@ export class TaskAPIService {
           return this.setupData(res);
         })
       );
+  }
+
+  public getCustomListTask(userId: string, listId: string) {
+    let url = `${this.taskApiUrl}/custom-list/${userId}/${listId}`;
+    return this.http
+      .get<IAPIResponse>(url)
+      .pipe(map((res) => this.setupData(res)));
   }
 
   private setupData(res: IAPIResponse): any {

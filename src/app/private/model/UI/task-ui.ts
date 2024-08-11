@@ -1,4 +1,4 @@
-import { ITask } from '../task';
+import { ITask } from '../task.model';
 import { DefaultPanels, TaskActions } from './tasks.contanst';
 
 export interface ITaskUI {
