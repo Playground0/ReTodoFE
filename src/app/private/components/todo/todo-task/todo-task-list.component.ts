@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ITask } from 'src/app/private/model/task';
+import { ITask } from 'src/app/private/model/task.model';
 import { TaskEditorDialogComponent } from './task-editor-dialog/task-editor-dialog.component';
 import { IDialogData } from 'src/app/private/model/UI/task-ui';
 import {

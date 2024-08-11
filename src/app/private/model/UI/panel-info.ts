@@ -6,5 +6,6 @@ export interface IPanel{
 export interface IPanelLink{
     name: string,
     link: string,
-    tooltip: string
+    tooltip: string,
+    isDefaultList: boolean
 }

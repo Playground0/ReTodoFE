@@ -1,11 +1,43 @@
 <div class="content" *ngIf="panelItems">
   <ng-content></ng-content>
-  <div class="panelAction" *ngFor="let item of panelItems">
-    <a
-      class="side-link"
-      (click)="sendAction(item)"
-      title="{{ item.tooltip }}"
-      >{{ item.name }}</a
+  <div
+    (click)="sendViewAction(item)"
+    class="panelAction"
+    *ngFor="let item of panelItems"
+  >
+    <mat-icon *ngIf="item.link === 'inbox'">inbox</mat-icon>
+    <mat-icon *ngIf="item.link === 'search'">search</mat-icon>
+    <mat-icon *ngIf="item.link === 'today'">event</mat-icon>
+    <mat-icon *ngIf="item.link === 'upcoming'">calendar_view_day</mat-icon>
+    <button
+      (click)="$event.stopPropagation()"
+      *ngIf="!item.isDefaultList"
+      mat-icon-button
+      [matMenuTriggerFor]="menu"
     >
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <span class="side-link" matTooltip="{{ item.tooltip }}">{{
+      item.name
+    }}</span>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="sendViewAction(item)">
+        <mat-icon>open_in_new</mat-icon>
+        <span>View List</span>
+      </button>
+      <button mat-menu-item (click)="deleteList(item)">
+        <mat-icon>delete_outline</mat-icon>
+        <span>Delete List</span>
+      </button>
+      <button mat-menu-item (click)="archivelist(item)">
+        <mat-icon>archive</mat-icon>
+        <span>Archive List</span>
+      </button>
+      <button mat-menu-item (click)="hidelist(item)">
+        <mat-icon>visibility_off</mat-icon>
+        <span>Hide List</span>
+      </button>
+    </mat-menu>
   </div>
 </div>
