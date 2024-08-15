@@ -61,6 +61,12 @@
         gap: 2rem;
         margin-left: 3rem;
         align-items: center;
+
+        .date-time-block{
+          background-color: darkgray;
+          padding: 5px;
+          border-radius: 5px;
+        }
       }
     }
   }
