@@ -23,7 +23,9 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { DateOverduePipe } from './pipes/date-overdue.pipe';
+import { FetchTimePipe } from './pipes/fetch-time.pipe';
 import {MatMenuModule} from '@angular/material/menu';
+import { TransformDatePipe } from './pipes/transform-date.pipe';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,8 @@ import {MatMenuModule} from '@angular/material/menu';
     TodoActionsComponent,
     TaskEditorDialogComponent,
     DateOverduePipe,
+    FetchTimePipe,
+    TransformDatePipe
   ],
   imports: [
     CommonModule,
@@ -52,7 +56,7 @@ import {MatMenuModule} from '@angular/material/menu';
     MatSlideToggleModule,
     MatSnackBarModule,
     MatTooltipModule,
-    MatMenuModule
+    MatMenuModule,
   ],
   providers:[{provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: false}}]
 })

@@ -33,37 +33,21 @@ h2 {
     color: $text-color;
   }
   .more-task-details {
-    display: flex;
-    justify-content: space-evenly;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
 
     .date-time-picker {
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
-      flex-direction: column;
-
-      .toggle-time-btn {
-        background-color: $button-color;
-        border-radius: 20px;
-      }
-
-      .clear-time {
-        background-color: $button-color-warn;
-        border-radius: 20px;
-        color: white;
-      }
+      display: grid;
 
       .time-picker {
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        flex-direction: column;
-
-        .time-actions{
-          display: flex;
-          gap: 1rem;
-        }
+        display: grid;
       }
+    }
+
+    .extra-actions{
+      display: grid;
+      align-items: center;
     }
     .slide-toggle {
       display: flex;

@@ -31,7 +31,10 @@
           <mat-icon *ngIf="task.taskEndDate | dateoverdue" matTooltip="Overdue"
             >notification_important</mat-icon
           >
-          <span matTooltip="Due Date">{{ task.taskEndDate | date }}</span>
+          <div class="date-time-block">
+            <span matTooltip="Due Date">{{ task.taskEndDate | transformdate }}</span>
+            <span matTooltip="Due Time"> {{ task.taskEndDate | fetchtime }}</span>
+          </div>
         </div>
         <span *ngIf="!task.taskEndDate"><i>No Date</i></span>
         <div *ngIf="task.priority">

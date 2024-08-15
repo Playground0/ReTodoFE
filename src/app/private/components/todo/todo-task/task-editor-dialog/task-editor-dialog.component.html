@@ -21,7 +21,7 @@
       <div class="date-time-picker">
         <h3 class="subheading-date-time">Choose date and time:</h3>
         <mat-form-field class="example-full-width" *ngIf="!isRecurring">
-          <mat-label>End Date</mat-label>
+          <mat-label>Set End Date</mat-label>
           <input
             matInput
             [matDatepicker]="picker"
@@ -35,14 +35,18 @@
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
         <mat-form-field class="example-full-width" *ngIf="isRecurring">
-          <mat-label>Enter a date range</mat-label>
+          <mat-label>Set Date range</mat-label>
           <mat-date-range-input [rangePicker]="picker" [min]="minDate">
             <input
               matStartDate
               formControlName="taskStartDate"
               placeholder="Start date"
             />
-            <input matEndDate formControlName="taskEndDate" placeholder="End date"  />
+            <input
+              matEndDate
+              formControlName="taskEndDate"
+              placeholder="End date"
+            />
           </mat-date-range-input>
           <mat-datepicker-toggle
             matIconSuffix
@@ -50,20 +54,29 @@
           ></mat-datepicker-toggle>
           <mat-date-range-picker #picker></mat-date-range-picker>
         </mat-form-field>
-        <!-- <button
-          class="toggle-time-btn"
-          mat-button
-          *ngIf="!showTimePicker"
-          (click)="toggleTimePicker()"
-        >
-          Time
-        </button> -->
-        <!-- <div *ngIf="showTimePicker" class="time-picker">
-          <timepicker
-            formControlName="taskEndTime"
-            [showMeridian]="false"
-          ></timepicker>
-          <div class="time-actions">
+
+        <div class="time-picker">
+          <mat-form-field appearance="fill">
+            <mat-label>Set Time</mat-label>
+            <mat-select formControlName="taskEndTime">
+              <mat-option *ngFor="let time of timeSlots" [value]="time">
+                {{ time }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-slide-toggle  formControlName="timeToggle" #toggle (change)="toggleTimePicker()"
+            >Set Time</mat-slide-toggle
+          >
+          <!-- <button
+            class="toggle-time-btn"
+            mat-button
+            *ngIf="!showTimePicker"
+            (click)="toggleTimePicker()"
+          >
+            Add Time
+          </button> -->
+
+          <!-- <div *ngIf="showTimePicker" class="time-actions">
             <button mat-button class="clear-time" (click)="clearTime()">
               Clear
             </button>
@@ -72,10 +85,10 @@
               class="toggle-time-btn"
               (click)="toggleTimePicker()"
             >
-             Cancel
+              Cancel
             </button>
-          </div>
-        </div> -->
+          </div> -->
+        </div>
       </div>
       <div class="extra-actions">
         <h3 class="subheading-date-time">Actions:</h3>
