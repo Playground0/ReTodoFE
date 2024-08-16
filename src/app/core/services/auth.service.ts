@@ -10,7 +10,10 @@ import {
 } from '../model/auth-page.model';
 import { Router } from '@angular/router';
 import { FormsService } from 'src/app/shared/service/forms.service';
-import { APIStatusMessage, IAPIResponse } from 'src/app/shared/model/basic-api.model';
+import {
+  APIStatusMessage,
+  IAPIResponse,
+} from 'src/app/shared/model/basic-api.model';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +24,9 @@ export class AuthService {
   apiUrl: string = this.isLocalHost
     ? 'http://localhost:8000/api/v1'
     : 'https://retodobe.onrender.com/api/v1';
+  clientUrl: string = this.isLocalHost
+    ? 'http://localhost:4200'
+    : 'https://re-todo-fe.vercel.app';
   private isUserLoggedIn = new BehaviorSubject<boolean>(false);
   isUserLoggedIn$ = this.isUserLoggedIn.asObservable();
   private tokenName: string = 'rtdAuthToken';
@@ -37,14 +43,16 @@ export class AuthService {
     const token = this.localDataService.localTokenData;
     return token ? true : false;
   }
-//TODO: Refactor the below code
+  //TODO: Refactor the below code
   public login(loginDetails: ILoginUser): Observable<IAPIResponse> {
     return this.http
       .patch<IAPIResponse>(`${this.apiUrl}/auth/login`, loginDetails)
       .pipe(
         map((res: IAPIResponse) => {
-          const user: IUserAPI | null  = res.Data ? res.Data as IUserAPI : null;
-          if (user){
+          const user: IUserAPI | null = res.Data
+            ? (res.Data as IUserAPI)
+            : null;
+          if (user) {
             this.localDataService.localTokenData = user.sessionToken
               ? user.sessionToken
               : '';
@@ -62,8 +70,11 @@ export class AuthService {
       );
   }
 
-  public register(loginDetails: ICreateUser) : Observable<IAPIResponse>{
-    return this.http.post<IAPIResponse>(`${this.apiUrl}/auth/register`, loginDetails);
+  public register(loginDetails: ICreateUser): Observable<IAPIResponse> {
+    return this.http.post<IAPIResponse>(
+      `${this.apiUrl}/auth/register`,
+      loginDetails
+    );
   }
 
   public logout(email: string): Observable<IAPIResponse> {
@@ -74,8 +85,8 @@ export class AuthService {
       .pipe(
         map((res: IAPIResponse) => {
           if (res.Status === APIStatusMessage.Success) {
-            this.localDataService.removeLocalData(this.tokenName);
-            this.localDataService.removeLocalData(this.userDataName);
+            this.localDataService.localTokenData = '';
+            this.localDataService.localUserData = '';
             this.formService.currentData = null;
             this.isUserLoggedIn.next(false);
             this.router.navigateByUrl('/auth/login');
@@ -85,9 +96,17 @@ export class AuthService {
       );
   }
 
-  public resetPassword(loginDetails: unknown) {
-    console.log('reset password');
+  public forgotPassword(email: string) : Observable<IAPIResponse>{
+    const requestObject = {
+      email,
+      url: this.clientUrl
+    }
+    return this.http.post<IAPIResponse>(`${this.apiUrl}/auth/forgot-password`,requestObject)
   }
+
+  public resetPassword(token: string, newPassword: string) : Observable<IAPIResponse>{
+    return this.http.post<IAPIResponse>(`${this.apiUrl}/auth/reset-password`, {token,newPassword})
+  } 
 
   //Use it when we have set this value to true manually
   public confirmUserLoggedIn() {
@@ -101,7 +120,7 @@ export class AuthService {
     this.isUserLoggedIn.next(value);
   }
 
-  public getApiUrl(){
+  public getApiUrl() {
     return this.apiUrl;
   }
 }

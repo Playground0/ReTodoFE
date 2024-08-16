@@ -9,6 +9,7 @@ import { FormsService } from 'src/app/shared/service/forms.service';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { Subscription } from 'rxjs';
 import { APIStatusMessage, IAPIResponse } from 'src/app/shared/model/basic-api.model';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-auth-page',
@@ -26,14 +27,15 @@ export class AuthPageComponent implements OnInit, OnDestroy {
   functionMap: { [key: string]: Function } = {
     login: (param: any) => this.login(param),
     register: (param: any) => this.register(param),
-    reset: (param: any) => this.reset(param),
+    forgotpass: (param: any) => this.forgotpass(param),
   };
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private formService: FormsService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private _snackBar: MatSnackBar,
   ) {}
 
   public ngOnInit(): void {
@@ -53,6 +55,7 @@ export class AuthPageComponent implements OnInit, OnDestroy {
     this.activatedRoute.params.subscribe((param) => {
       this.currentRoute = param['authType'];
       this.runFunction = this.functionMap[this.currentRoute];
+      this.formService.currentData = null
       switch (this.currentRoute) {
         case 'login':
           this.setCustomFormConfig(
@@ -60,7 +63,6 @@ export class AuthPageComponent implements OnInit, OnDestroy {
             this.authPageType.LoginMessage,
             [this.authPageType.Login]
           );
-
           break;
         case 'register':
           this.setCustomFormConfig(
@@ -69,11 +71,11 @@ export class AuthPageComponent implements OnInit, OnDestroy {
             [this.authPageType.Register]
           );
           break;
-        case 'reset':
+        case 'forgotpass':
           this.setCustomFormConfig(
-            this.resetPassConfig,
-            this.authPageType.ResetPasswordMessage,
-            [this.authPageType.ResetPassword, 'forgot Password']
+            this.forgotPassConfig,
+            this.authPageType.ForgotPasswordMessage,
+            [this.authPageType.ForgotPassword]
           );
           break;
         default:
@@ -153,30 +155,12 @@ export class AuthPageComponent implements OnInit, OnDestroy {
     ];
   }
 
-  private get resetPassConfig(): IFormControlBody[] {
+  private get forgotPassConfig(): IFormControlBody[] {
     return [
       {
         controlLabel: 'Email',
         controlName: 'email',
         controlType: 'email',
-        controlValidation: { required: true },
-      },
-      {
-        controlLabel: 'Current Password',
-        controlName: 'currentPassword',
-        controlType: 'password',
-        controlValidation: { required: true },
-      },
-      {
-        controlLabel: 'New Password',
-        controlName: 'newPassword',
-        controlType: 'password',
-        controlValidation: { required: true },
-      },
-      {
-        controlLabel: 'Re-Enter new password',
-        controlName: 'reenterNewPassword',
-        controlType: 'password',
         controlValidation: { required: true },
       },
     ];
@@ -208,8 +192,19 @@ export class AuthPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  private reset(formData: unknown) {
-    this.authService.resetPassword(formData);
+  private forgotpass(formData: any) {
+    this.authService.forgotPassword(formData?.email as string).subscribe({
+      next: (res:IAPIResponse) => {
+        if(res.Status === APIStatusMessage.Success){
+          const config: MatSnackBarConfig = {
+            duration: 5 * 1000,
+          };
+          this._snackBar.open(res.Message,'',config);
+          console.log(res.Message)
+          this.router.navigateByUrl('/auth/login')
+        }
+      }
+    });
   }
 
   private setCustomFormConfig(
