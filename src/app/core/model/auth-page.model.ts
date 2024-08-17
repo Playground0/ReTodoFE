@@ -1,10 +1,12 @@
 export enum AuthPageType{
     Login = 'login',
     Register = 'register',
+    ForgotPassword = 'forgot password',
     ResetPassword = 'reset password',
     LoginMessage= 'Get going!',
     RegisterMessage = 'Tell us about you!',
-    ResetPasswordMessage = 'Save it!'
+    ResetPasswordMessage = 'Save it!',
+    ForgotPasswordMessage = 'Enter your email to get a link',
 }
 
 export interface ILoginUser{
@@ -32,6 +34,11 @@ export interface IUser{
     id: string,
     userRole: string,
     username: string,
+}
+
+export interface IResetPassword{
+    password: string,
+    reEnterPassword: string
 }
 
 export interface IUserAPI extends IUser{

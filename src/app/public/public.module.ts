@@ -9,6 +9,8 @@ import { AboutusComponent } from './components/aboutus/aboutus.component';
 
 import { SharedModule } from '../shared/shared.module';
 import { MatIconModule } from '@angular/material/icon';
+import { ResetPasswordComponent } from './components/auth-page/reset-password/reset-password.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -16,7 +18,14 @@ import { MatIconModule } from '@angular/material/icon';
     AuthPageComponent,
     DemoComponent,
     AboutusComponent,
+    ResetPasswordComponent,
   ],
-  imports: [CommonModule, PublicRoutingModule, SharedModule, MatIconModule],
+  imports: [
+    CommonModule,
+    PublicRoutingModule,
+    SharedModule,
+    MatIconModule,
+    MatSnackBarModule,
+  ],
 })
 export class PublicModule {}
