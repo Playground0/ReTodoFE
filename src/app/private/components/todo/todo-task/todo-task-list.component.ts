@@ -45,15 +45,22 @@ export class TodoTaskListComponent {
       data: data ?? data,
     };
 
-    this.dialog
+    const dialog = this.dialog
       .open(TaskEditorDialogComponent, {
         panelClass: 'add-task-dialog',
         data: dialogData,
         width: '800px',
         enterAnimationDuration,
         exitAnimationDuration,
+        disableClose: true,
+      });
+
+      dialog.backdropClick().subscribe(() => {
+        dialog.close();
       })
-      .afterClosed()
+
+
+      dialog.afterClosed()
       .subscribe((result: IDialogData) => {
         if (result.action) {
           this.taskAction.emit(result);
