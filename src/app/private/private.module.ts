@@ -58,6 +58,6 @@ import { TransformDatePipe } from './pipes/transform-date.pipe';
     MatTooltipModule,
     MatMenuModule,
   ],
-  providers:[{provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: false}}]
+  providers:[{provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true}}]
 })
 export class PrivateModule { }

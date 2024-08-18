@@ -24,3 +24,9 @@ body {
   font-style: normal;
   text-align: center;
 }
+
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface{
+  // background-color: $secondary-color;
+  border-radius: 20px;
+}
+

@@ -1,7 +1,7 @@
 <div class="dialog-header-section">
-  <h2 class="dialog-title" *ngIf="!data" mat-dialog-title>Add Task</h2>
-  <h2 class="dialog-title" *ngIf="data" mat-dialog-title>Task Details</h2>
-  <button mat-button *ngIf="data" (click)="deleteTask()">
+  <span class="dialog-title" *ngIf="!data" mat-dialog-title>Add Task</span>
+  <span class="dialog-title" *ngIf="data" mat-dialog-title>Task Details</span>
+  <button mat-button *ngIf="data" (click)="deleteTask()" matTooltip="Delete Task"> 
     <mat-icon class="delete-btn-icon">delete</mat-icon>
   </button>
 </div>
@@ -67,27 +67,6 @@
           <mat-slide-toggle  formControlName="timeToggle" #toggle (change)="toggleTimePicker()"
             >Set Time</mat-slide-toggle
           >
-          <!-- <button
-            class="toggle-time-btn"
-            mat-button
-            *ngIf="!showTimePicker"
-            (click)="toggleTimePicker()"
-          >
-            Add Time
-          </button> -->
-
-          <!-- <div *ngIf="showTimePicker" class="time-actions">
-            <button mat-button class="clear-time" (click)="clearTime()">
-              Clear
-            </button>
-            <button
-              mat-button
-              class="toggle-time-btn"
-              (click)="toggleTimePicker()"
-            >
-              Cancel
-            </button>
-          </div> -->
         </div>
       </div>
       <div class="extra-actions">
@@ -119,11 +98,12 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-button cdkFocusInitial *ngIf="!data" (click)="addTask()">
+  <button class="cancel-btn" mat-button mat-dialog-close>Cancel</button>
+  <button class="proceed-btn" mat-button cdkFocusInitial *ngIf="!data" (click)="addTask()">
     Add
   </button>
   <button
+    class="proceed-btn"
     mat-button
     cdkFocusInitial
     [disabled]="!dataChanged"
