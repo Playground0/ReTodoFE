@@ -6,18 +6,32 @@ h2 {
   
 }
 
+:host{
+  ::ng-deep .mdc-dialog__actions{
+    padding: 8px 20px;
+  }
+
+  ::ng-depp .mat-mdc-button:not(:disabled){
+    color: white;
+  }
+}
+
 .dialog-header-section{
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  margin: 2rem 2rem 0 1rem;
+  align-items: center;
+  margin: 1rem 1.5rem 0.5rem 1.5rem;
+  border-bottom: 1px solid $primary-color;
 
   .dialog-title{
-    padding: 0 1rem;
-    color: $text-color;
+    padding: 0.5rem 0.5rem;
+    font-weight: 800;
+    // background-color: #DEDEDE;
+    display: flex;
+    align-items: center;
+    border-radius: 20px;
   }
   .delete-btn-icon{
-    color: $button-color-warn;
     font-size: 20px;
     margin: 0;
   }
@@ -33,37 +47,23 @@ h2 {
     color: $text-color;
   }
   .more-task-details {
-    display: flex;
-    justify-content: space-evenly;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    border-bottom: 1px solid $primary-color;
+    padding-bottom: 1.5rem;
 
     .date-time-picker {
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
-      flex-direction: column;
-
-      .toggle-time-btn {
-        background-color: $button-color;
-        border-radius: 20px;
-      }
-
-      .clear-time {
-        background-color: $button-color-warn;
-        border-radius: 20px;
-        color: white;
-      }
+      display: grid;
 
       .time-picker {
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        flex-direction: column;
-
-        .time-actions{
-          display: flex;
-          gap: 1rem;
-        }
+        display: grid;
       }
+    }
+
+    .extra-actions{
+      display: grid;
+      align-items: center;
     }
     .slide-toggle {
       display: flex;
@@ -79,4 +79,13 @@ h2 {
 
 .delete-btn-icon:hover{
   color: black;
+}
+
+.cancel-btn{
+  border: 1px solid $secondary-color;
+}
+
+.proceed-btn{
+  background-color: $secondary-color;
+  color: white !important;
 }
