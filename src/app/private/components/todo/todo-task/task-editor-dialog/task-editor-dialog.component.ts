@@ -63,12 +63,12 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.setupFormSubscription();
-    this.setupDatesOnPanel();
     this.data = this.dialogData.data as ITask;
     if (this.data) {
       this.setupUpdateFormData(this.data);
     }
+    this.setupFormSubscription();
+    this.setupDatesOnPanel();
     this.minDate = this.dateService.getStartOfDay();
   }
 
@@ -116,15 +116,15 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
 
   setupFormSubscription() {
     this.subscription.add(
+      this.taskForm.valueChanges.subscribe((values) =>
+        this.checkDataChanges(values)
+      )
+    );
+    this.subscription.add(
       this.taskForm
         .get('taskEndDate')
         ?.valueChanges.pipe(distinctUntilChanged())
         .subscribe((value) => this.handleTaskEndDateChange(value))
-    );
-    this.subscription.add(
-      this.taskForm.valueChanges.subscribe((values) =>
-        this.checkDataChanges(values)
-      )
     );
   }
 
@@ -138,7 +138,7 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
   }
 
   checkDataChanges(data: ITask) {
-    if (this.data) {
+    if (data) {
       const currentFormData = this.taskForm.value;
       this.dataChanged = !this.isFormValueEqual(
         this.initialFormData,

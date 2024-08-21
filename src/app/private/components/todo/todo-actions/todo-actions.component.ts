@@ -3,15 +3,21 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-todo-actions',
   templateUrl: './todo-actions.component.html',
-  styleUrls: ['./todo-actions.component.scss']
+  styleUrls: ['./todo-actions.component.scss'],
 })
 export class TodoActionsComponent {
+  isTimerActive: boolean = false
+  constructor() {}
 
   startPomodoro(){
-    console.log('Start Pomodoro')
+    if(this.isTimerActive) return
+    this.isTimerActive = true
+  }
+  showAnalytics() {
+    console.log('Analytics Data');
   }
 
-  showAnalytics(){
-    console.log('Analytics Data')
+  stopPomodoro(){
+    this.isTimerActive = false
   }
 }
