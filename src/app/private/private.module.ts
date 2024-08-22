@@ -26,6 +26,8 @@ import { DateOverduePipe } from './pipes/date-overdue.pipe';
 import { FetchTimePipe } from './pipes/fetch-time.pipe';
 import {MatMenuModule} from '@angular/material/menu';
 import { TransformDatePipe } from './pipes/transform-date.pipe';
+import { PomodoroTimerComponent } from './components/todo/todo-actions/pomodoro-timer/pomodoro-timer.component';
+import { ShowTwoDigitPipe } from './pipes/show-two-digits.pipe';
 
 @NgModule({
   declarations: [
@@ -38,7 +40,9 @@ import { TransformDatePipe } from './pipes/transform-date.pipe';
     TaskEditorDialogComponent,
     DateOverduePipe,
     FetchTimePipe,
-    TransformDatePipe
+    TransformDatePipe,
+    PomodoroTimerComponent,
+    ShowTwoDigitPipe
   ],
   imports: [
     CommonModule,
