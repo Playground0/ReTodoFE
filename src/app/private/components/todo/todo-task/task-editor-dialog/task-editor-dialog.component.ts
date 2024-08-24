@@ -8,14 +8,14 @@ import {
 import { MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import * as dayjs from 'dayjs';
-import { ITask, ITaskUpdate } from 'src/app/private/model/task.model';
+import { ITask } from 'src/app/private/model/task.model';
 import {
   DefaultPanels,
   TaskActions,
 } from 'src/app/private/model/UI/tasks.contanst';
 import { IDialogData, ITaskUI } from 'src/app/private/model/UI/task-ui';
 import { DateService } from 'src/app/shared/service/date.service';
-import { Subscription, distinctUntilChanged } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-task-editor-dialog',
@@ -76,14 +76,13 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
     this.taskForm = this.fb.group({
       taskTitle: ['', [Validators.required]],
       taskDesc: [''],
-      taskStartDate: [''],
-      taskEndDate: [''],
-      taskEndTime: [{ value: '', disabled: true }],
+      taskStartDate: [null],
+      taskEndDate: [null],
+      taskEndTime: [{ value: null, disabled: true }],
       priority: [''],
       reminder: [false],
       isRecurring: [false],
       occurance: [''],
-      timeToggle: [{ value: '', disabled: true }],
     });
   }
 
@@ -100,41 +99,50 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
   }
 
   setupUpdateFormData(newData: ITask) {
-    this.taskForm.get('taskTitle')?.setValue(newData.taskTitle);
-    this.taskForm.get('taskDesc')?.setValue(newData.taskDesc);
-    this.taskForm.get('taskStartDate')?.setValue(newData.taskStartDate);
-    this.taskForm.get('taskEndDate')?.setValue(newData.taskEndDate);
-    this.taskForm
-      .get('taskEndTime')
-      ?.setValue(this.setEndTime(newData.taskEndDate));
-    this.taskForm.get('priority')?.setValue(newData.priority);
-    this.taskForm.get('reminder')?.setValue(newData.reminder);
-    this.taskForm.get('isRecurring')?.setValue(newData.isRecurring);
-    this.taskForm.get('occurance')?.setValue(newData.occurance);
+    const taskControls = [
+      'taskTitle',
+      'taskDesc',
+      'taskStartDate',
+      'taskEndDate',
+      'priority',
+      'reminder',
+      'isRecurring',
+      'occurance',
+    ];
+
+    taskControls.forEach((control) => {
+      this.taskForm.get(control)?.setValue(newData[control as keyof ITask]);
+    });
+
+    if (newData.taskEndDate) {
+      this.handleTaskEndDateChange(newData.taskEndDate);
+      const endTime = this.setEndTime(newData.taskEndDate);
+      this.taskForm.get('taskEndTime')?.setValue(endTime);
+    }
     this.initialFormData = this.taskForm.value;
   }
 
   setupFormSubscription() {
     this.subscription.add(
+      this.taskForm
+        .get('taskEndDate')
+        ?.valueChanges.subscribe((value) => this.handleTaskEndDateChange(value))
+    );
+    this.subscription.add(
       this.taskForm.valueChanges.subscribe((values) =>
         this.checkDataChanges(values)
       )
     );
-    this.subscription.add(
-      this.taskForm
-        .get('taskEndDate')
-        ?.valueChanges.pipe(distinctUntilChanged())
-        .subscribe((value) => this.handleTaskEndDateChange(value))
-    );
   }
 
   handleTaskEndDateChange(value: string) {
-    const timeToggleControl = this.taskForm.get('timeToggle');
+    const endTime = this.taskForm.get('taskEndTime');
     if (value) {
-      timeToggleControl?.enable();
       this.setupTimeSlots();
+      endTime?.enable();
     } else {
-      timeToggleControl?.disable();
+      this.timeSlots = [];
+      endTime?.disable();
     }
   }
 
@@ -158,24 +166,9 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
       action: TaskActions.Add,
       data: this.taskForm.value as ITaskUI,
     };
-
-    // console.log(dialogData)
-
     this.dialogRef.close(dialogData);
   }
 
-  toggleTimePicker() {
-    this.showTimePicker = !this.showTimePicker;
-
-    if (this.showTimePicker) {
-      this.taskForm.get('taskEndTime')?.enable();
-      this.setupTimeSlots();
-      return;
-    }
-    this.taskForm.get('taskEndTime')?.disable();
-    this.taskForm.get('taskEndTime')?.reset();
-    this.timeSlots = [];
-  }
   clearTime() {
     this.taskForm.get('taskEndTime')?.reset();
   }
@@ -220,7 +213,7 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
   }
 
   generateTimeSlots() {
-    const times = [];
+    const times: string[] = [];
     for (let i = 0; i < 24; i++) {
       const hour = i < 10 ? '0' + i : i;
       times.push(`${hour}:00`, `${hour}:15`, `${hour}:30`, `${hour}:45`);
@@ -230,13 +223,16 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
 
   filterValidTimeSlots(allTimeSlots: string[]): string[] {
     const endDate = dayjs(this.taskForm.get('taskEndDate')?.value);
-    const currentTime = endDate.isAfter(dayjs()) ? endDate : dayjs();
-    
-    return allTimeSlots.filter((time) => {
-      const [hour, minute] = time.split(':').map(Number);
-      const timeSlot = dayjs(currentTime).hour(hour).minute(minute).second(0);
-      return timeSlot.isAfter(currentTime);
-    });
+
+    if (endDate.isSame(dayjs(), 'day')) {
+      const currentTime = dayjs();
+      return allTimeSlots.filter((time) => {
+        const [hour, minute] = time.split(':').map(Number);
+        const timeSlot = dayjs().hour(hour).minute(minute).second(0);
+        return timeSlot.isAfter(currentTime);
+      });
+    }
+    return allTimeSlots;
   }
 
   setTime(time: string, endDate: string): string {
@@ -260,8 +256,6 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
     const time = date.split('T')[1].split(':');
     if (time) time.pop();
     const convertedTime = time.join(':');
-    this.toggleTimePicker();
-    this.taskForm.get('timeToggle')?.setValue(true);
     return convertedTime;
   }
 
@@ -294,7 +288,7 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  setupTimeSlots(){
+  setupTimeSlots() {
     const times = this.generateTimeSlots();
     this.timeSlots = this.filterValidTimeSlots(times);
   }
