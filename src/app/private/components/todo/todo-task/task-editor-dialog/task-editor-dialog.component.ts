@@ -132,6 +132,7 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
     const timeToggleControl = this.taskForm.get('timeToggle');
     if (value) {
       timeToggleControl?.enable();
+      this.setupTimeSlots();
     } else {
       timeToggleControl?.disable();
     }
@@ -168,8 +169,7 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
 
     if (this.showTimePicker) {
       this.taskForm.get('taskEndTime')?.enable();
-      const times = this.generateTimeSlots();
-      this.timeSlots = this.filterValidTimeSlots(times);
+      this.setupTimeSlots();
       return;
     }
     this.taskForm.get('taskEndTime')?.disable();
@@ -229,10 +229,12 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
   }
 
   filterValidTimeSlots(allTimeSlots: string[]): string[] {
-    const currentTime = dayjs();
+    const endDate = dayjs(this.taskForm.get('taskEndDate')?.value);
+    const currentTime = endDate.isAfter(dayjs()) ? endDate : dayjs();
+    
     return allTimeSlots.filter((time) => {
       const [hour, minute] = time.split(':').map(Number);
-      const timeSlot = dayjs().hour(hour).minute(minute).second(0);
+      const timeSlot = dayjs(currentTime).hour(hour).minute(minute).second(0);
       return timeSlot.isAfter(currentTime);
     });
   }
@@ -242,7 +244,6 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
       const date = dayjs(endDate);
       const [hour, minute] = time.split(':').map(Number);
       const dateTime = date.hour(hour).minute(minute).second(0).millisecond(0);
-
       return dateTime.format('YYYY-MM-DDTHH:mm:ss');
     }
     return dayjs(endDate).format('YYYY-MM-DDTHH:mm:ss');
@@ -291,6 +292,11 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
           ?.setValue(this.dateService.getStartOfDay(endDate));
       }
     }
+  }
+
+  setupTimeSlots(){
+    const times = this.generateTimeSlots();
+    this.timeSlots = this.filterValidTimeSlots(times);
   }
 
   ngOnDestroy(): void {
