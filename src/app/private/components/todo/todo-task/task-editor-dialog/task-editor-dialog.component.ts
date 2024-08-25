@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -8,14 +8,14 @@ import {
 import { MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import * as dayjs from 'dayjs';
-import { ITask, ITaskUpdate } from 'src/app/private/model/task.model';
+import { ITask } from 'src/app/private/model/task.model';
 import {
   DefaultPanels,
   TaskActions,
 } from 'src/app/private/model/UI/tasks.contanst';
 import { IDialogData, ITaskUI } from 'src/app/private/model/UI/task-ui';
 import { DateService } from 'src/app/shared/service/date.service';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-task-editor-dialog',
@@ -23,9 +23,9 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
   styleUrls: ['./task-editor-dialog.component.scss'],
 })
 //TODO: Refactor the whole component
-export class TaskEditorDialogComponent implements OnInit {
+export class TaskEditorDialogComponent implements OnInit, OnDestroy {
   taskForm!: FormGroup;
-  isRecurring = false
+  isRecurring = false;
   minDate = '';
   showTimePicker = false;
   priorityLevels = [
@@ -50,65 +50,110 @@ export class TaskEditorDialogComponent implements OnInit {
   data!: ITask | undefined;
   dataChanged: boolean = false;
   initialFormData: any;
-  istimePickerAppendToInput = true
+  istimePickerAppendToInput = true;
   timeSlots: string[] = [];
+  subscription: Subscription = new Subscription();
 
   constructor(
     public dialogRef: MatDialogRef<TaskEditorDialogComponent>,
-    private fb: FormBuilder, private dateService : DateService,
-    @Inject(MAT_DIALOG_DATA) public dialogData: IDialogData,
-  ) {
+    private fb: FormBuilder,
+    private dateService: DateService,
+    @Inject(MAT_DIALOG_DATA) public dialogData: IDialogData
+  ) {}
+
+  ngOnInit(): void {
+    this.initializeForm();
+    this.data = this.dialogData.data as ITask;
+    if (this.data) {
+      this.setupUpdateFormData(this.data);
+    }
+    this.setupFormSubscription();
+    this.setupDatesOnPanel();
+    this.minDate = this.dateService.getStartOfDay();
+  }
+
+  initializeForm() {
     this.taskForm = this.fb.group({
       taskTitle: ['', [Validators.required]],
       taskDesc: [''],
-      taskStartDate: [''],
-      taskEndDate: [''],
-      taskEndTime: [''],
+      taskStartDate: [null],
+      taskEndDate: [null],
+      taskEndTime: [{ value: null, disabled: true }],
       priority: [''],
       reminder: [false],
       isRecurring: [false],
       occurance: [''],
-      timeToggle: ['']
     });
-    this.minDate = this.dateService.getStartOfDay()
-
-    this.data = this.dialogData.data as ITask;
-
-    if (dialogData.panel === DefaultPanels.Today) {
-      const today = dayjs().toISOString();
-      this.taskForm.get('taskEndDate')?.setValue(today);
-    } else if (dialogData.panel === DefaultPanels.Upcoming) {
-      const tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD');
-      this.taskForm.get('taskEndDate')?.setValue(tomorrow);
-    }
-
-    this.taskForm.get('taskEndTime')?.disable()
   }
 
-  ngOnInit(): void {
-    if (this.data) {
-      const newData = this.data as ITask;
-      this.taskForm.get('taskTitle')?.setValue(newData.taskTitle);
-      this.taskForm.get('taskDesc')?.setValue(newData.taskDesc);
-      this.taskForm.get('taskStartDate')?.setValue(newData.taskStartDate)
-      this.taskForm.get('taskEndDate')?.setValue(newData.taskEndDate);
-      this.taskForm.get('taskEndTime')?.setValue(this.setEndTime(newData.taskEndDate));
-      this.taskForm.get('priority')?.setValue(newData.priority);
-      this.taskForm.get('reminder')?.setValue(newData.reminder);
-      this.taskForm.get('isRecurring')?.setValue(newData.isRecurring);
-      this.taskForm.get('occurance')?.setValue(newData.occurance);
-      this.initialFormData = this.taskForm.value;
+  setupDatesOnPanel() {
+    if (this.taskForm.get('taskEndDate')?.value) return;
+    const taskEndDate = this.taskForm.get('taskEndDate');
+    if (this.dialogData.panel === DefaultPanels.Today) {
+      const today = dayjs().toISOString();
+      taskEndDate?.setValue(today);
+    } else if (this.dialogData.panel === DefaultPanels.Upcoming) {
+      const tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD');
+      taskEndDate?.setValue(tomorrow);
     }
+  }
 
-    this.taskForm.valueChanges.subscribe(() => {
-      if (this.data) {
-        const currentFormData = this.taskForm.value;
-        this.dataChanged = !this.isFormValueEqual(
-          this.initialFormData,
-          currentFormData
-        );
-      }
+  setupUpdateFormData(newData: ITask) {
+    const taskControls = [
+      'taskTitle',
+      'taskDesc',
+      'taskStartDate',
+      'taskEndDate',
+      'priority',
+      'reminder',
+      'isRecurring',
+      'occurance',
+    ];
+
+    taskControls.forEach((control) => {
+      this.taskForm.get(control)?.setValue(newData[control as keyof ITask]);
     });
+
+    if (newData.taskEndDate) {
+      this.handleTaskEndDateChange(newData.taskEndDate);
+      const endTime = this.setEndTime(newData.taskEndDate);
+      this.taskForm.get('taskEndTime')?.setValue(endTime);
+    }
+    this.initialFormData = this.taskForm.value;
+  }
+
+  setupFormSubscription() {
+    this.subscription.add(
+      this.taskForm
+        .get('taskEndDate')
+        ?.valueChanges.subscribe((value) => this.handleTaskEndDateChange(value))
+    );
+    this.subscription.add(
+      this.taskForm.valueChanges.subscribe((values) =>
+        this.checkDataChanges(values)
+      )
+    );
+  }
+
+  handleTaskEndDateChange(value: string) {
+    const endTime = this.taskForm.get('taskEndTime');
+    if (value) {
+      this.setupTimeSlots();
+      endTime?.enable();
+    } else {
+      this.timeSlots = [];
+      endTime?.disable();
+    }
+  }
+
+  checkDataChanges(data: ITask) {
+    if (data) {
+      const currentFormData = this.taskForm.value;
+      this.dataChanged = !this.isFormValueEqual(
+        this.initialFormData,
+        currentFormData
+      );
+    }
   }
 
   addTask() {
@@ -121,35 +166,19 @@ export class TaskEditorDialogComponent implements OnInit {
       action: TaskActions.Add,
       data: this.taskForm.value as ITaskUI,
     };
-
-    // console.log(dialogData)
-
     this.dialogRef.close(dialogData);
   }
 
-  toggleTimePicker() {
-    this.showTimePicker = !this.showTimePicker;
-    
-    if(this.showTimePicker){
-      this.taskForm.get('taskEndTime')?.enable()
-      const times = this.generateTimeSlots();
-      this.timeSlots = this.filterValidTimeSlots(times)
-      return
-    }
-    this.taskForm.get('taskEndTime')?.disable()
-    this.taskForm.get('taskEndTime')?.reset()
-    this.timeSlots = []
-  }
   clearTime() {
     this.taskForm.get('taskEndTime')?.reset();
   }
 
   toggleReurring() {
-      this.isRecurring = !this.isRecurring
+    this.isRecurring = !this.isRecurring;
   }
 
   saveData() {
-    this.setupDateAndTime()
+    this.setupDateAndTime();
     const updateData = this.data as ITask;
     updateData.taskTitle = this.taskForm.get('taskTitle')?.value;
     updateData.taskDesc = this.taskForm.get('taskDesc')?.value;
@@ -169,7 +198,7 @@ export class TaskEditorDialogComponent implements OnInit {
   }
 
   deleteTask() {
-    const data = this.data as ITask
+    const data = this.data as ITask;
     const dialogData: IDialogData = {
       action: TaskActions.Delete,
       data: data._id,
@@ -184,73 +213,87 @@ export class TaskEditorDialogComponent implements OnInit {
   }
 
   generateTimeSlots() {
-    const times = [];
+    const times: string[] = [];
     for (let i = 0; i < 24; i++) {
       const hour = i < 10 ? '0' + i : i;
-      times.push(`${hour}:00`,`${hour}:15`,`${hour}:30`, `${hour}:45`);
+      times.push(`${hour}:00`, `${hour}:15`, `${hour}:30`, `${hour}:45`);
     }
     return times;
   }
 
   filterValidTimeSlots(allTimeSlots: string[]): string[] {
-    const currentTime = dayjs();
-    return allTimeSlots.filter(time => {
+    const endDate = dayjs(this.taskForm.get('taskEndDate')?.value);
+
+    if (endDate.isSame(dayjs(), 'day')) {
+      const currentTime = dayjs();
+      return allTimeSlots.filter((time) => {
+        const [hour, minute] = time.split(':').map(Number);
+        const timeSlot = dayjs().hour(hour).minute(minute).second(0);
+        return timeSlot.isAfter(currentTime);
+      });
+    }
+    return allTimeSlots;
+  }
+
+  setTime(time: string, endDate: string): string {
+    if (time) {
+      const date = dayjs(endDate);
       const [hour, minute] = time.split(':').map(Number);
-      const timeSlot = dayjs().hour(hour).minute(minute).second(0);
-      return timeSlot.isAfter(currentTime);
-    });
-  }
-
-  setTime(time : string, endDate: string) : string{
-
-    if(time){
-      const date = dayjs(endDate)
-      const [hour, minute] = time.split(':').map(Number)
       const dateTime = date.hour(hour).minute(minute).second(0).millisecond(0);
- 
-      return dateTime.format("YYYY-MM-DDTHH:mm:ss");
+      return dateTime.format('YYYY-MM-DDTHH:mm:ss');
     }
-    return dayjs(endDate).format("YYYY-MM-DDTHH:mm:ss");
+    return dayjs(endDate).format('YYYY-MM-DDTHH:mm:ss');
   }
 
-  setEndTime(date:string){
-    if(!date) return ''
-    const hour = dayjs(date).hour()
-    const minutes = dayjs(date).minute()
+  setEndTime(date: string) {
+    if (!date) return '';
+    const hour = dayjs(date).hour();
+    const minutes = dayjs(date).minute();
 
-    if(hour <= 0 && minutes === 0){
-      return ''
+    if (hour <= 0 && minutes === 0) {
+      return '';
     }
-    const time = date.split("T")[1].split(":");
-    if(time)
-    time.pop()
-    const convertedTime = time.join(":")
-    this.toggleTimePicker()
-    this.taskForm.get('timeToggle')?.setValue(true)
-    return convertedTime
-
+    const time = date.split('T')[1].split(':');
+    if (time) time.pop();
+    const convertedTime = time.join(':');
+    return convertedTime;
   }
 
-  setupDateAndTime(){
-    if(this.taskForm.get('taskEndTime')?.value){
-      const time = this.taskForm.get('taskEndTime')?.value
-      if(this.taskForm.get('taskStartDate')?.value){
-        const startDate = this.taskForm.get('taskEndDate')?.value
-        this.taskForm.get('taskStartDate')?.setValue(this.setTime(time, startDate))
+  setupDateAndTime() {
+    if (this.taskForm.get('taskEndTime')?.value) {
+      const time = this.taskForm.get('taskEndTime')?.value;
+      if (this.taskForm.get('taskStartDate')?.value) {
+        const startDate = this.taskForm.get('taskEndDate')?.value;
+        this.taskForm
+          .get('taskStartDate')
+          ?.setValue(this.setTime(time, startDate));
       }
-      if(this.taskForm.get('taskEndDate')?.value){
-        const endDate = this.taskForm.get('taskEndDate')?.value
-        this.taskForm.get('taskEndDate')?.setValue(this.setTime(time, endDate))
+      if (this.taskForm.get('taskEndDate')?.value) {
+        const endDate = this.taskForm.get('taskEndDate')?.value;
+        this.taskForm.get('taskEndDate')?.setValue(this.setTime(time, endDate));
       }
-    }else{
-      const startDate = this.taskForm.get('taskStartDate')?.value
-      const endDate = this.taskForm.get('taskEndDate')?.value
-      if(startDate){
-        this.taskForm.get('taskStartDate')?.setValue(this.dateService.getStartOfDay(startDate))
+    } else {
+      const startDate = this.taskForm.get('taskStartDate')?.value;
+      const endDate = this.taskForm.get('taskEndDate')?.value;
+      if (startDate) {
+        this.taskForm
+          .get('taskStartDate')
+          ?.setValue(this.dateService.getStartOfDay(startDate));
       }
-      if(endDate){
-        this.taskForm.get('taskEndDate')?.setValue(this.dateService.getStartOfDay(endDate))
+      if (endDate) {
+        this.taskForm
+          .get('taskEndDate')
+          ?.setValue(this.dateService.getStartOfDay(endDate));
       }
     }
+  }
+
+  setupTimeSlots() {
+    const times = this.generateTimeSlots();
+    this.timeSlots = this.filterValidTimeSlots(times);
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

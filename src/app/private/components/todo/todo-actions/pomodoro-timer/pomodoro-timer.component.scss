@@ -1,0 +1,38 @@
+.timer-options {
+  display: grid;
+  gap: 1rem;
+  font-size: 2rem;
+  align-items: center;
+  grid-template-columns: 1fr 0.5fr 0.5fr 0.5fr;
+
+}
+
+.timer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  font-size: 4rem;
+
+  .timer-btn{
+    height: 4rem;
+  }
+}
+
+
+.timer-btn {
+    background-color: #dedede;
+    height: fit-content;
+    width: fit-content;
+    border-radius: 10px;
+    font-size: 3rem;
+    transition: 1s;
+  }
+  .timer-btn:hover {
+    background-color: black;
+    color: white;
+  }
+
+  .large-icon {
+    font-size: 36px;
+  }

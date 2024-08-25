@@ -1,0 +1,37 @@
+<div class="timer-options" *ngIf="showTimerOptions">
+  <span>Session Length: </span>
+  <button class="timer-btn" mat-button (click)="startPomodoro(25)">25</button>
+  <button class="timer-btn" mat-button (click)="startPomodoro(50)">50</button>
+</div>
+<div class="timer">
+  <span *ngIf="isTimerActive">{{ minutes | twodigit }}:{{ seconds | twodigit }}</span>
+  <button
+    class="timer-btn"
+    mat-button
+    *ngIf="isTimerActive && !isTimerPaused"
+    (click)="pausePomodoro(); $event.stopPropagation()"
+    matTooltip="Pause Timer"
+  >
+    <mat-icon class="large-icon">pause_circle_filled</mat-icon>
+  </button>
+
+  <button
+    class="timer-btn"
+    mat-button
+    *ngIf="isTimerActive && isTimerPaused"
+    (click)="resumeTimer(); $event.stopPropagation()"
+    matTooltip="Play Timer"
+  >
+    <mat-icon class="large-icon">play_circle_filled</mat-icon>
+  </button>
+
+  <button
+  class="timer-btn"
+    mat-button
+    *ngIf="isTimerActive"
+    (click)="stopPomodoro(); $event.stopPropagation()"
+    matTooltip="Stop timer"
+  >
+    <mat-icon class="large-icon">stop</mat-icon>
+  </button>
+</div>

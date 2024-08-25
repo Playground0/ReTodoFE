@@ -1,7 +1,12 @@
 <div class="dialog-header-section">
   <span class="dialog-title" *ngIf="!data" mat-dialog-title>Add Task</span>
   <span class="dialog-title" *ngIf="data" mat-dialog-title>Task Details</span>
-  <button mat-button *ngIf="data" (click)="deleteTask()" matTooltip="Delete Task"> 
+  <button
+    mat-button
+    *ngIf="data"
+    (click)="deleteTask()"
+    matTooltip="Delete Task"
+  >
     <mat-icon class="delete-btn-icon">delete</mat-icon>
   </button>
 </div>
@@ -64,9 +69,6 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-slide-toggle  formControlName="timeToggle" #toggle (change)="toggleTimePicker()"
-            >Set Time</mat-slide-toggle
-          >
         </div>
       </div>
       <div class="extra-actions">
@@ -99,7 +101,13 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button class="cancel-btn" mat-button mat-dialog-close>Cancel</button>
-  <button class="proceed-btn" mat-button cdkFocusInitial *ngIf="!data" (click)="addTask()">
+  <button
+    class="proceed-btn"
+    mat-button
+    cdkFocusInitial
+    *ngIf="!data"
+    (click)="addTask()"
+  >
     Add
   </button>
   <button
