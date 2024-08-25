@@ -25,7 +25,7 @@
     <div class="more-task-details">
       <div class="date-time-picker">
         <h3 class="subheading-date-time">Choose date and time:</h3>
-        <mat-form-field class="example-full-width" *ngIf="!isRecurring">
+        <mat-form-field class="example-full-width" *ngIf="!taskForm.get('isRecurring')?.value">
           <mat-label>Set End Date</mat-label>
           <input
             matInput
@@ -39,7 +39,7 @@
           ></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
-        <mat-form-field class="example-full-width" *ngIf="isRecurring">
+        <mat-form-field class="example-full-width" *ngIf="taskForm.get('isRecurring')?.value">
           <mat-label>Set Date range</mat-label>
           <mat-date-range-input [rangePicker]="picker" [min]="minDate">
             <input
@@ -91,7 +91,6 @@
         <p *ngIf="!data || (data && !data.isRecurring)" class="slide-toggle">
           <mat-slide-toggle
             formControlName="isRecurring"
-            (change)="toggleReurring()"
             >Is it recurring?</mat-slide-toggle
           >
         </p>

@@ -173,10 +173,6 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
     this.taskForm.get('taskEndTime')?.reset();
   }
 
-  toggleReurring() {
-    this.isRecurring = !this.isRecurring;
-  }
-
   saveData() {
     this.setupDateAndTime();
     const updateData = this.data as ITask;
@@ -239,10 +235,14 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
     if (time) {
       const date = dayjs(endDate);
       const [hour, minute] = time.split(':').map(Number);
+
+      if (isNaN(hour) || isNaN(minute)) {
+        throw new Error('Invalid time format');
+      }
       const dateTime = date.hour(hour).minute(minute).second(0).millisecond(0);
       return dateTime.format('YYYY-MM-DDTHH:mm:ss');
     }
-    return dayjs(endDate).format('YYYY-MM-DDTHH:mm:ss');
+    return dayjs(endDate).startOf('day').format('YYYY-MM-DDTHH:mm:ss');
   }
 
   setEndTime(date: string) {
@@ -260,31 +260,31 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
   }
 
   setupDateAndTime() {
-    if (this.taskForm.get('taskEndTime')?.value) {
-      const time = this.taskForm.get('taskEndTime')?.value;
-      if (this.taskForm.get('taskStartDate')?.value) {
-        const startDate = this.taskForm.get('taskEndDate')?.value;
-        this.taskForm
-          .get('taskStartDate')
-          ?.setValue(this.setTime(time, startDate));
-      }
-      if (this.taskForm.get('taskEndDate')?.value) {
-        const endDate = this.taskForm.get('taskEndDate')?.value;
-        this.taskForm.get('taskEndDate')?.setValue(this.setTime(time, endDate));
-      }
-    } else {
-      const startDate = this.taskForm.get('taskStartDate')?.value;
-      const endDate = this.taskForm.get('taskEndDate')?.value;
-      if (startDate) {
-        this.taskForm
-          .get('taskStartDate')
-          ?.setValue(this.dateService.getStartOfDay(startDate));
-      }
-      if (endDate) {
-        this.taskForm
-          .get('taskEndDate')
-          ?.setValue(this.dateService.getStartOfDay(endDate));
-      }
+    const time = this.taskForm.get('taskEndTime')?.value;
+    const startDate = this.taskForm.get('taskStartDate')?.value;
+    const endDate = this.taskForm.get('taskEndDate')?.value;
+
+    if (time) {
+      this.updateDateWithTime(startDate, time, 'taskStartDate');
+      this.updateDateWithTime(endDate, time, 'taskEndDate');
+      return
+    }
+
+    this.setStartOfDay(startDate, 'taskStartDate');
+    this.setStartOfDay(endDate, 'taskEndDate');
+  }
+
+  private updateDateWithTime(date: string | null, time: string, controlName: string) {
+    if (date) {
+      const formattedDate = this.setTime(time, date);
+      this.taskForm.get(controlName)?.setValue(formattedDate);
+    }
+  }
+
+  private setStartOfDay(date: string | null, controlName: string) {
+    if (date) {
+      const startOfDay = this.dateService.getStartOfDay(date);
+      this.taskForm.get(controlName)?.setValue(startOfDay);
     }
   }
 
