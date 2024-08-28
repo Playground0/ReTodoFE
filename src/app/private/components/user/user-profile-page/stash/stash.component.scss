@@ -1,0 +1,49 @@
+.content {
+  color: #ffff;
+  padding: 2rem;
+  display: grid;
+  gap: 2rem;
+
+  .stash-description {
+    text-align: left; /* Align text to the left */
+    h2 {
+      font-size: 22px; /* Font size for heading */
+      font-weight: normal; /* Normal font weight for a clean look */
+      margin-bottom: 20px; /* Space below the heading */
+    }
+
+    p {
+      font-size: 18px; /* Standard paragraph font size */
+      line-height: 1.6; /* Line height for paragraphs */
+    }
+
+    ul {
+      list-style-type: none; /* Remove bullet points */
+      padding-left: 0; /* Remove default padding */
+    }
+
+    li {
+      font-size: 16px; /* Match the font size of paragraphs */
+      line-height: 1.5; /* Consistent line spacing */
+      margin-bottom: 10px; /* Space between list items */
+    }
+
+    li::before {
+      content: "• "; /* Add a bullet point manually */
+      color: #333; /* Bullet color matches text */
+      font-size: 20px; /* Slightly larger bullet point */
+      vertical-align: middle; /* Align bullet vertically with text */
+    }
+  }
+
+  .table-section {
+    .filter-section {
+      display: flex;
+      justify-content: space-evenly;;
+      gap: 1rem;
+    }
+    table {
+      border: 20px;
+    }
+  }
+}

@@ -1,0 +1,47 @@
+@import "../../../../../../styles.scss";
+
+
+.content{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    .user-details{
+        padding: 2rem 2rem;
+
+        img{
+            width: 40%;
+        }
+    }
+
+    .account-settings{
+        background-color: $background-color;
+        margin: 2rem;
+        padding: 1rem;
+        border-radius: 20px;
+        box-shadow: $default-shadow;
+        height: fit-content;
+
+        .actions{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0 5rem;
+
+            button{
+                background-color: $background-color;
+                border: none;
+                color: none;
+                place-content:center ;
+                box-shadow: $default-shadow;
+                transition: 0.8s;
+                border-radius: 20px;
+                padding: 1rem;
+            }
+
+            button:hover{
+                background-color: $secondary-color;
+                color: #fff;
+            }
+        }
+    }
+}

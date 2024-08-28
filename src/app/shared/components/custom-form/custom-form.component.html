@@ -1,7 +1,7 @@
-<div class="content" *ngIf="config$">
-  <span class="title"> {{ config$.formName | titlecase }} </span>
+<div class="content" *ngIf="config">
+  <span class="title"> {{ config.formName | titlecase }} </span>
   <form class="form" [formGroup]="form">
-    <div *ngFor="let control of config$.controls">
+    <div *ngFor="let control of config.controls">
       <mat-form-field class="full-width">
         <mat-label>{{ control.controlLabel | titlecase }}:</mat-label>
         <input
@@ -65,7 +65,7 @@
   </form>
   <button
     class="action-btn"
-    *ngFor="let btn of config$.btnNames"
+    *ngFor="let btn of config.btnNames"
     (click)="onSubmit()"
     type="submit"
     mat-button

@@ -32,7 +32,7 @@ export class TaskAPIService {
     );
   }
 
-  public creteTask(newTask: ITaskCreate): Observable<ITask> {
+  public createTask(newTask: ITaskCreate): Observable<ITask> {
     return this.http.post<IAPIResponse>(this.taskApiUrl, newTask).pipe(
       map((res) => {
         return this.setupData(res);

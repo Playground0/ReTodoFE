@@ -1,0 +1,37 @@
+<div class="content">
+  <div class="user-details" *ngIf="data">
+    <img *ngIf="data.profilePicture" [src]="data.profilePicture" alt="" />
+    <img
+      *ngIf="!data.profilePicture"
+      src="../../../../../../assets/user_picture_default.jpg"
+      alt=""
+    />
+
+    <h2 *ngIf="data">{{ data.username }}</h2>
+
+    <rtd-custom-form
+      [config]="customFormConfig"
+      [data]="data"
+    ></rtd-custom-form>
+  </div>
+  <div class="account-settings">
+    <h2>Account Settings</h2>
+    <hr />
+    <div class="actions">
+      <h3>Reset Passord:</h3>
+      <button mat-button (click)="resetPassword()">Send Mail</button>
+    </div>
+    <div class="actions">
+      <h3>Delete Account:</h3>
+      <button mat-button (click)="deleteAccount()">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+    <div class="actions">
+      <h3>Logout of all devices:</h3>
+      <button mat-button (click)="logOutOfAllDevices()">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

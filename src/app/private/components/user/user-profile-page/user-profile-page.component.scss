@@ -1,0 +1,48 @@
+@import "../../../../../styles.scss";
+
+.content {
+  display: grid;
+  grid-template-columns: 1.1fr 4fr;
+  padding: 2rem;
+  margin: 0 4rem;
+  gap: 1rem;
+
+  .user-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: $default-shadow;
+    border-radius: 0 0 20px 20px;
+    min-height: 25vh;
+    color: $text-color;
+    border: 3px solid $secondary-color;
+    border-top: none;
+    padding: 2rem;
+    height: fit-content;
+
+    .panelAction {
+      padding: 0.5rem 1rem;
+      font-size: 20px;
+      border-radius: 10px;
+      text-align: justify;
+      cursor: pointer;
+      transition: 0.8s;
+      box-shadow: $default-shadow;
+      background-color: lightgray;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panelAction:hover {
+      background-color: $secondary-color;
+      color: #fff;
+    }
+  }
+
+  .panel-details{
+    background-color: $secondary-color;
+    border-radius: 0 0 20px 20px;
+    box-shadow: $default-shadow;
+  }
+}
