@@ -21,16 +21,14 @@ import {
 //TODO: Refactor the whole service
 export class AuthService {
   isLocalHost: boolean = false;
-  apiUrl: string = this.isLocalHost
+  private apiUrl: string = this.isLocalHost
     ? 'http://localhost:8000/api/v1'
     : 'https://retodobe.onrender.com/api/v1';
-  clientUrl: string = this.isLocalHost
+  private clientUrl: string = this.isLocalHost
     ? 'http://localhost:4200'
     : 'https://re-todo-fe.vercel.app';
   private isUserLoggedIn = new BehaviorSubject<boolean>(false);
   isUserLoggedIn$ = this.isUserLoggedIn.asObservable();
-  private tokenName: string = 'rtdAuthToken';
-  private userDataName: string = 'rtdUserData';
 
   constructor(
     private http: HttpClient,

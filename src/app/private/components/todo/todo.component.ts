@@ -194,7 +194,7 @@ export class TodoComponent implements OnInit, OnDestroy {
     };
     this.subscription.add(
       this.taskApiService
-        .creteTask(newTask)
+        .createTask(newTask)
         .pipe(
           tap(() => {
             if (this.isDefaultList) {

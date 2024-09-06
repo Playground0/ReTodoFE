@@ -7,14 +7,19 @@ import {
   IAPIResponse,
 } from 'src/app/shared/model/basic-api.model';
 import { IList, IListCreate, IListUpdate } from '../model/list.model';
+import { LocalDataService } from 'src/app/core/services/localdata.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ListApiService {
   private listApiUrl = '';
-  constructor(private authService: AuthService, private http: HttpClient) {
-    this.listApiUrl = this.authService.apiUrl + '/list';
+  constructor(
+    private authService: AuthService,
+    private http: HttpClient,
+    private localDataService: LocalDataService
+  ) {
+    this.listApiUrl = this.authService.getApiUrl() + '/list';
   }
 
   public getAll(userId: string): Observable<IList[]> {
@@ -66,6 +71,30 @@ export class ListApiService {
     return this.http
       .patch<IAPIResponse>(url, request)
       .pipe(map((res) => this.setupData(res)));
+  }
+
+  public getDeletedList() {
+    const userId = this.localDataService.localUserData;
+    let url = `${this.listApiUrl}/${userId}/deletedList`;
+    return this.http
+    .get<IAPIResponse>(url)
+    .pipe(map((res: IAPIResponse) => this.setupData(res)));
+  }
+
+  public getArchivedList() {
+    const userId = this.localDataService.localUserData;
+    let url = `${this.listApiUrl}/${userId}/archivedList`;
+    return this.http
+    .get<IAPIResponse>(url)
+    .pipe(map((res: IAPIResponse) => this.setupData(res)));
+  }
+
+  public getHiddenList() {
+    const userId = this.localDataService.localUserData;
+    let url = `${this.listApiUrl}/${userId}/hiddenList`;
+    return this.http
+    .get<IAPIResponse>(url)
+    .pipe(map((res: IAPIResponse) => this.setupData(res)));
   }
 
   private setupData(res: IAPIResponse): any {

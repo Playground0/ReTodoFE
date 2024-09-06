@@ -28,6 +28,10 @@ import {MatMenuModule} from '@angular/material/menu';
 import { TransformDatePipe } from './pipes/transform-date.pipe';
 import { PomodoroTimerComponent } from './components/todo/todo-actions/pomodoro-timer/pomodoro-timer.component';
 import { ShowTwoDigitPipe } from './pipes/show-two-digits.pipe';
+import { DashboardComponent } from './components/user/user-profile-page/dashboard/dashboard.component';
+import { StashComponent } from './components/user/user-profile-page/stash/stash.component';
+import { SharedModule } from "../shared/shared.module";
+import {MatTableModule} from '@angular/material/table';
 
 @NgModule({
   declarations: [
@@ -42,7 +46,9 @@ import { ShowTwoDigitPipe } from './pipes/show-two-digits.pipe';
     FetchTimePipe,
     TransformDatePipe,
     PomodoroTimerComponent,
-    ShowTwoDigitPipe
+    ShowTwoDigitPipe,
+    DashboardComponent,
+    StashComponent
   ],
   imports: [
     CommonModule,
@@ -61,7 +67,9 @@ import { ShowTwoDigitPipe } from './pipes/show-two-digits.pipe';
     MatSnackBarModule,
     MatTooltipModule,
     MatMenuModule,
-  ],
+    SharedModule,
+    MatTableModule,
+],
   providers:[{provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true}}]
 })
 export class PrivateModule { }

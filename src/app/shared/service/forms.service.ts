@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IFormControlBody } from '../model/form.model';
+import { ICustomFormBody, IFormControlBody } from '../model/form.model';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -37,7 +37,6 @@ export class FormsService {
     }
     return result;
   }
-
   //It sets the current value of the form
   set currentData(value: any) {
     this.formData.next(value);
