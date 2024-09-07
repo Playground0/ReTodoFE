@@ -7,6 +7,8 @@ import {
   APIStatusMessage,
   IAPIResponse,
 } from 'src/app/shared/model/basic-api.model';
+import { LocalDataService } from 'src/app/core/services/localdata.service';
+import { IUser } from 'src/app/core/model/auth-page.model';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +16,11 @@ import {
 //TODO: Refactor this code for error handling
 export class TaskAPIService {
   private taskApiUrl = '';
-  constructor(private authSerive: AuthService, private http: HttpClient) {
+  constructor(
+    private authSerive: AuthService,
+    private http: HttpClient,
+    private localDataService: LocalDataService
+  ) {
     this.taskApiUrl = this.authSerive.getApiUrl() + '/task';
   }
 
@@ -95,6 +101,15 @@ export class TaskAPIService {
 
   public getCustomListTask(userId: string, listId: string) {
     let url = `${this.taskApiUrl}/custom-list/${userId}/${listId}`;
+    return this.http
+      .get<IAPIResponse>(url)
+      .pipe(map((res) => this.setupData(res)));
+  }
+
+  public searchTasks(searchQuery: string) {
+    const userId = (this.localDataService.localUserData as IUser).id;
+    const url = `${this.taskApiUrl}/${userId}?search=${searchQuery}`;
+
     return this.http
       .get<IAPIResponse>(url)
       .pipe(map((res) => this.setupData(res)));

@@ -5,6 +5,7 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Subscription, tap } from 'rxjs';
@@ -17,6 +18,7 @@ import {
 } from 'src/app/private/model/UI/tasks.contanst';
 import { ListApiService } from 'src/app/private/services/list-api.service';
 import { PrivateCommonService } from 'src/app/private/services/private-common.service';
+import { SearchDialogComponent } from './search-dialog/search-dialog.component';
 
 @Component({
   selector: 'app-todo-panel',
@@ -34,16 +36,40 @@ export class TodoPanelComponent implements OnDestroy {
     private router: Router,
     private listService: ListApiService,
     private commonService: PrivateCommonService,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
+    public dialog: MatDialog
   ) {}
 
   public sendViewAction(panelLink: IPanelLink) {
+    if (panelLink.link === DefaultPanels.Search) {
+      this.openSearchDialog(panelLink)
+      return;
+    }
     this.router.navigateByUrl(`/todo/${panelLink.link}`);
     this.action.emit(panelLink.name);
   }
 
+  private openSearchDialog(panelLink: IPanelLink){
+    const dialogRef = this.dialog.open(SearchDialogComponent, {
+      panelClass: 'add-task-dialog',
+      data: {},
+      width: '800px',
+      enterAnimationDuration:'200ms',
+      exitAnimationDuration: '200ms',
+      disableClose: true,
+    });
+
+    dialogRef.backdropClick().subscribe(() => {
+      dialogRef.close();
+    })
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.action.emit(panelLink.name);
+    })
+  }
+
   public deleteList(panelLink: IPanelLink) {
-    const userId = this.getUserData();
+    const userId = this.getUserId();
     this.subscription.add(
       this.listService
         .deleteList(panelLink.link, userId)
@@ -61,7 +87,7 @@ export class TodoPanelComponent implements OnDestroy {
   }
 
   public hidelist(panelLink: IPanelLink) {
-    const userId = this.getUserData();
+    const userId = this.getUserId();
     this.subscription.add(
       this.listService
         .hideList(panelLink.link, userId)
@@ -79,7 +105,7 @@ export class TodoPanelComponent implements OnDestroy {
   }
 
   public archivelist(panelLink: IPanelLink) {
-    const userId = this.getUserData();
+    const userId = this.getUserId();
     this.subscription.add(
       this.listService
         .archiveList(panelLink.link, userId)
@@ -107,8 +133,8 @@ export class TodoPanelComponent implements OnDestroy {
     this.refreshUserLists.emit(true);
   };
 
-  private getUserData(): string {
-    const user: IUser = this.commonService.getUserData() as IUser;
+  private getUserId(): string {
+    const user: IUser = this.commonService.UserData as IUser;
     return user.id;
   }
 
@@ -136,7 +162,7 @@ export class TodoPanelComponent implements OnDestroy {
   private undoList(listId: string, action: string) {
     this.subscription.add(
       this.listService
-        .undoListAction(listId, this.getUserData(), action)
+        .undoListAction(listId, this.getUserId(), action)
         .pipe(tap(() => this.refreshUserLists.emit(true)))
         .subscribe()
     );
