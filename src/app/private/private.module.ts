@@ -32,6 +32,8 @@ import { DashboardComponent } from './components/user/user-profile-page/dashboar
 import { StashComponent } from './components/user/user-profile-page/stash/stash.component';
 import { SharedModule } from "../shared/shared.module";
 import {MatTableModule} from '@angular/material/table';
+import { SearchDialogComponent } from './components/todo/todo-panel/search-dialog/search-dialog.component';
+import { PrivateCommonService } from './services/private-common.service';
 
 @NgModule({
   declarations: [
@@ -48,7 +50,8 @@ import {MatTableModule} from '@angular/material/table';
     PomodoroTimerComponent,
     ShowTwoDigitPipe,
     DashboardComponent,
-    StashComponent
+    StashComponent,
+    SearchDialogComponent
   ],
   imports: [
     CommonModule,
@@ -70,6 +73,6 @@ import {MatTableModule} from '@angular/material/table';
     SharedModule,
     MatTableModule,
 ],
-  providers:[{provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true}}]
+  providers:[{provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true}}, PrivateCommonService]
 })
 export class PrivateModule { }

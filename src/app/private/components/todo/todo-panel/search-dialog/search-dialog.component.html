@@ -1,0 +1,20 @@
+<mat-dialog-content class="content">
+  <form class="form" [formGroup]="searchForm">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search</mat-label>
+      <input matInput #searchInput type="text" formControlName="search" />
+    </mat-form-field>
+  </form>
+  <app-todo-task-list
+    class="list-section"
+    [tasks]="filteredTasks"
+    [pageTitle]="panel"
+    (taskActionCompleted)="doAction($event)"
+  ></app-todo-task-list>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="action-section">
+  <button class="close-btn" mat-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</mat-dialog-actions>
