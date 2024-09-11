@@ -1,0 +1,29 @@
+@import "../../../../../../styles.scss";
+
+.content {
+  padding: 1rem;
+
+  .search-field {
+    display: flex;
+    width: 100%;
+  }
+
+  .list-section {
+    background-color: $secondary-color;
+    padding: 1rem 2rem 1rem 1rem;
+    border-radius: 20px;
+    overflow-y: auto;
+    height: 45vh;
+  }
+}
+
+.action-section {
+  padding: 1rem;
+  margin: 1rem;
+  border-radius: 20px;
+  background-color: $secondary-color;
+
+  .close-btn {
+    color: white;
+  }
+}

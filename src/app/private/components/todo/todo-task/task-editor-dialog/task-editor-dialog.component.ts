@@ -25,7 +25,6 @@ import { Subscription } from 'rxjs';
 //TODO: Refactor the whole component
 export class TaskEditorDialogComponent implements OnInit, OnDestroy {
   taskForm!: FormGroup;
-  isRecurring = false;
   minDate = '';
   showTimePicker = false;
   priorityLevels = [

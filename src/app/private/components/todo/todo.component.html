@@ -56,7 +56,7 @@
         [tasks]="tasks"
         [pageTitle]="listTitle"
         [currentPanel]="currentPanel"
-        (taskAction)="doTaskAction($event)"
+        (taskActionCompleted)="onActionCompletion($event)"
       ></app-todo-task-list>
     </div>
   </div>

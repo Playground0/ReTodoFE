@@ -26,19 +26,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   styleUrls: ['./todo.component.scss'],
 })
 export class TodoComponent implements OnInit, OnDestroy {
-  private userId = '';
-  public tasks: ITask[] = [];
-  public runFuntion!: Function;
-  public listTitle: string = '';
-  private subscription = new Subscription();
-  public currentPanel!: DefaultPanels;
-  public showListForm = false;
-  private isDefaultList = false;
-
   //TODO: Add this to app configuation endpoint
   private panelDefaultItems: IPanelLink[] = [
     {
-      name: 'Search',
+      name: 'Search Tasks',
       link: 'search',
       tooltip: 'Search task',
       isDefaultList: true,
@@ -61,28 +52,18 @@ export class TodoComponent implements OnInit, OnDestroy {
       tooltip: 'Show Upcoming Task',
       isDefaultList: true,
     },
-    // {
-    //   name: `Completed Task`,
-    //   link: 'completed',
-    //   tooltip: `Show completed tasks`,
-    // },
-    // {
-    //   name: `Deleted Task`,
-    //   link: 'deleted',
-    //   tooltip: `Show deleted tasks`,
-    // },
-    // {
-    //   name: `Archived Task`,
-    //   link: 'archives',
-    //   tooltip: `Show archived tasks`,
-    // },
   ];
 
+  private userId = '';
+  public tasks: ITask[] = [];
+  public runFuntion!: Function;
+  public listTitle: string = '';
+  private subscription = new Subscription();
+  public currentPanel!: DefaultPanels;
+  public showListForm = false;
+  private isDefaultList = false;
   public panelDefault: IPanelLink[] = this.panelDefaultItems;
-
   public userLists: IPanelLink[] = [];
-
-  private snackBarDurationInSeconds = 5;
   public listForm: FormGroup;
   isCreatingList = false;
 
@@ -90,10 +71,7 @@ export class TodoComponent implements OnInit, OnDestroy {
     private commonService: PrivateCommonService,
     private taskApiService: TaskAPIService,
     private route: ActivatedRoute,
-    private localData: LocalDataService,
     public dialog: MatDialog,
-    private _snackBar: MatSnackBar,
-    private dateService: DateService,
     private listService: ListApiService,
     private fb: FormBuilder
   ) {
@@ -103,8 +81,13 @@ export class TodoComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.userId = this.getUserData();
+    this.userId = this.getUserId();
     this.refreshUserLists();
+    this.checkRouteAndSetupPage();
+    this.trackUndoAction();
+  }
+
+  private checkRouteAndSetupPage() {
     this.subscription.add(
       this.route.params.subscribe((route) => {
         this.tasks = [];
@@ -125,11 +108,29 @@ export class TodoComponent implements OnInit, OnDestroy {
     );
   }
 
+  private trackUndoAction() {
+    this.subscription.add(
+      this.commonService.undoAction.subscribe({
+        next: (res: boolean) => {
+          if (res) {
+            this.checkForDefaultAndRefresh();
+            this.commonService.setUndoAction(false);
+          }
+        },
+      })
+    );
+  }
+
   public panelAction(title: string) {
+    if (title === 'Search Tasks') {
+      this.checkForDefaultAndRefresh();
+      return;
+    }
     this.listTitle = title;
   }
-  private getUserData(): string {
-    const user: IUser = this.commonService.getUserData() as IUser;
+
+  private getUserId(): string {
+    const user: IUser = this.commonService.UserData as IUser;
     return user.id;
   }
 
@@ -155,165 +156,10 @@ export class TodoComponent implements OnInit, OnDestroy {
     }
   }
 
-  public doTaskAction(dialogData: IDialogData) {
-    const data: unknown = dialogData.data;
-    switch (dialogData.action) {
-      case TaskActions.Add:
-        this.addTask(data as ITask);
-        break;
-      case TaskActions.Update:
-        this.updateTask(data as ITask);
-        break;
-      case TaskActions.Delete:
-        this.deleteTask(data as string);
-        break;
-      case TaskActions.Complete:
-        this.completeTask(data as ITask);
-        break;
-      default:
-        console.error('Wrong Action');
+  public onActionCompletion(status: boolean) {
+    if (status) {
+      this.checkForDefaultAndRefresh();
     }
-  }
-
-  //TODO: update it for list id
-  private addTask(task: ITask) {
-    const user: IUser = this.localData.localUserData as IUser;
-    const isDefaultPanel = this.isDefaultList;
-    let newTask: ITaskCreate = {
-      userId: user.id,
-      currentListId: !isDefaultPanel ? this.currentPanel : '0',
-      previousListID: '0',
-      taskTitle: task.taskTitle,
-      taskDesc: task.taskDesc,
-      taskStartDate:task.taskStartDate,
-      taskEndDate: task.taskEndDate,
-      occurance: task.occurance,
-      priority: task.priority,
-      reminder: task.reminder ? true : false,
-      isRecurring: task.isRecurring ? true : false,
-    };
-    this.subscription.add(
-      this.taskApiService
-        .createTask(newTask)
-        .pipe(
-          tap(() => {
-            if (this.isDefaultList) {
-              this.refreshCurrentList();
-            } else {
-              this.refreshUserListTask();
-            }
-          })
-        )
-        .subscribe()
-    );
-  }
-
-  private updateTask(data: ITask) {
-    let updateTask: ITaskUpdate = {
-      taskId: data._id,
-      currentListId: data.currentListId,
-      previousListID: data.previousListID,
-      userId: data.userId,
-      taskTitle: data.taskTitle,
-      taskStartDate: data.taskStartDate,
-      taskEndDate: data.taskEndDate,
-      taskDesc: data.taskDesc,
-      occurance: data.occurance,
-      priority: data.priority,
-      reminder: data.reminder,
-      isRecurring: data.isRecurring,
-    };
-    this.subscription.add(
-      this.taskApiService
-        .updateTask(updateTask)
-        .pipe(
-          tap(() => {
-            if (this.isDefaultList) {
-              this.refreshCurrentList();
-            } else {
-              this.refreshUserListTask();
-            }
-          })
-        )
-        .subscribe()
-    );
-  }
-
-  private deleteTask(taskId: string) {
-    this.taskApiService.deleteTask(this.userId, taskId).subscribe({
-      next: (res: boolean | null) => {
-        if (res) {
-          if (this.isDefaultList) {
-            this.refreshCurrentList();
-          } else {
-            this.refreshUserListTask();
-          }
-
-          this.openUndoSnackBar(
-            taskId,
-            TaskActions.Delete,
-            SnackBarAction.TaskDeleted
-          );
-        }
-      },
-    });
-  }
-
-  private completeTask(data: ITask) {
-    this.subscription.add(
-      this.taskApiService.markAsCompleteTask(data._id, this.userId).subscribe({
-        next: (res) => {
-          if (this.isDefaultList) {
-            this.refreshCurrentList();
-          } else {
-            this.refreshUserListTask();
-          }
-          this.openUndoSnackBar(
-            data._id,
-            TaskActions.Complete,
-            SnackBarAction.TaskCompleted
-          );
-        },
-      })
-    );
-  }
-
-  private openUndoSnackBar(
-    taskId: string,
-    action: TaskActions,
-    message: string
-  ) {
-    const config: MatSnackBarConfig = {
-      duration: this.snackBarDurationInSeconds * 1000,
-    };
-    this._snackBar.open(message, TaskActions.Undo, config);
-    const snackBar = this._snackBar._openedSnackBarRef;
-    this.subscription.add(
-      snackBar?.afterDismissed().subscribe({
-        next: (res) => {
-          if (res.dismissedByAction) {
-            this.undoTask(taskId, action);
-          }
-        },
-      })
-    );
-  }
-
-  private undoTask(taskId: string, taskAction: TaskActions) {
-    this.subscription.add(
-      this.taskApiService
-        .undoTaskAction(taskId, this.userId, taskAction)
-        .pipe(
-          tap(() => {
-            if (this.isDefaultList) {
-              this.refreshCurrentList();
-            } else {
-              this.refreshUserListTask();
-            }
-          })
-        )
-        .subscribe()
-    );
   }
 
   private refreshCurrentList = () => {
@@ -329,6 +175,14 @@ export class TodoComponent implements OnInit, OnDestroy {
     this.refreshCurrentList();
   };
 
+  private checkForDefaultAndRefresh() {
+    if (this.isDefaultList) {
+      this.refreshCurrentList();
+    } else {
+      this.refreshUserListTask();
+    }
+  }
+
   private compareTasks(a: ITask, b: ITask): number {
     const dateA = new Date(a.taskEndDate).getTime();
     const dateB = new Date(b.taskEndDate).getTime();
@@ -340,10 +194,6 @@ export class TodoComponent implements OnInit, OnDestroy {
 
     // If dates are the same, compare by priority in descending order
     return b.priority - a.priority; // Descending order for priority
-  }
-
-  private setupStartOfTheDay(date: string) {
-    return date ? this.dateService.getStartOfDay(date) : '';
   }
 
   private getLists(userId: string) {
