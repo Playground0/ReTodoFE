@@ -1,0 +1,38 @@
+@import "../../../../styles.scss";
+
+.content {
+  margin: 1rem 8rem;
+  padding: 2rem 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-shadow: $default-shadow;
+  border-radius: 20px;
+  border: 2px solid $secondary-color;
+  font-size: x-large;
+  gap: 2rem;
+  color: $text-color;
+
+  p{
+    font-weight: 100;
+    margin: 0;
+    text-align: justify;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+
+  h1{
+    margin: 0;
+    text-decoration: underline;
+  }
+
+//   h2{
+//     text-decoration: underline;
+//   }
+
+  .main-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
