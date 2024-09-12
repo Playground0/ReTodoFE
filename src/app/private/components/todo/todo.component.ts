@@ -2,20 +2,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { IPanelLink } from '../../model/UI/panel-info';
 import { PrivateCommonService } from '../../services/private-common.service';
 import { IUser } from 'src/app/core/model/auth-page.model';
-import { ITask, ITaskCreate, ITaskUpdate } from '../../model/task.model';
-import { ActivatedRoute } from '@angular/router';
+import { ITask } from '../../model/task.model';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, tap } from 'rxjs';
-import { LocalDataService } from 'src/app/core/services/localdata.service';
-import { IDialogData } from '../../model/UI/task-ui';
 import { MatDialog } from '@angular/material/dialog';
 import { TaskAPIService } from '../../services/task-api.service';
-import {
-  DefaultPanels,
-  SnackBarAction,
-  TaskActions,
-} from '../../model/UI/tasks.contanst';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { DateService } from 'src/app/shared/service/date.service';
+import { DefaultPanels } from '../../model/UI/tasks.contanst';
 import { ListApiService } from '../../services/list-api.service';
 import { IList, IListCreate } from '../../model/list.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -73,7 +65,8 @@ export class TodoComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     public dialog: MatDialog,
     private listService: ListApiService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) {
     this.listForm = this.fb.group({
       listTitle: [''],
@@ -240,6 +233,9 @@ export class TodoComponent implements OnInit, OnDestroy {
       this.taskApiService.getCustomListTask(this.userId, listId).subscribe({
         next: (res) => {
           this.tasks = res.sort(this.compareTasks);
+        },
+        error: (err) => {
+          this.router.navigateByUrl('**');
         },
       })
     );

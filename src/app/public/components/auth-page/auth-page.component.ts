@@ -171,7 +171,7 @@ export class AuthPageComponent implements OnInit, OnDestroy {
       next: (res: IAPIResponse) => {
         if (res.Status === APIStatusMessage.Success) {
           this.formService.currentData = null
-          this.router.navigateByUrl('/profile');
+          this.router.navigateByUrl('');
         }
       },
       error: (err) => {
