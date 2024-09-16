@@ -76,7 +76,9 @@ export class TodoTaskListComponent {
   }
 
   private addTask(data: ITask) {
-    this.commonService.addTask(data as ITask).subscribe({
+    const isDefault = Object.values(DefaultPanels).includes(this.currentPanel);
+    data.currentListId = isDefault ? '0' : this.currentPanel;
+    this.commonService.addTask(data).subscribe({
       next: (res) => {
         if (res) {
           this.taskActionCompleted.emit(true);
@@ -89,7 +91,7 @@ export class TodoTaskListComponent {
   }
 
   private updateTask(data: ITask) {
-    this.commonService.updateTask(data as ITask).subscribe({
+    this.commonService.updateTask(data).subscribe({
       next: (res) => {
         if (res) {
           this.taskActionCompleted.emit(true);
