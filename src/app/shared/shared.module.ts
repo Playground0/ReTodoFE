@@ -11,9 +11,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { CustomFormComponent } from './components/custom-form/custom-form.component';
 import { DateService } from './service/date.service';
+import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
 
 @NgModule({
-  declarations: [HeaderComponent, FooterComponent, CustomFormComponent],
+  declarations: [HeaderComponent, FooterComponent, CustomFormComponent, NotFoundPageComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -25,6 +26,6 @@ import { DateService } from './service/date.service';
     MatIconModule,
   ],
   providers: [DateService],
-  exports: [HeaderComponent, FooterComponent, CustomFormComponent],
+  exports: [HeaderComponent, FooterComponent, CustomFormComponent, NotFoundPageComponent],
 })
 export class SharedModule {}

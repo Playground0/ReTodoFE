@@ -16,7 +16,7 @@
 
     h1{
         transition: 1s;
-        background: linear-gradient(to right, $primary-color 50%, $secondary-color 50%);
+        background: $gradient-icon;
         padding: 1rem;
         border-radius: 20px;
         font-weight: 500;
