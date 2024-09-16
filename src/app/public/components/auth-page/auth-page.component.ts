@@ -91,13 +91,13 @@ export class AuthPageComponent implements OnInit, OnDestroy {
         controlLabel: 'Email',
         controlName: 'email',
         controlType: 'email',
-        controlValidation: { required: true },
+        controlValidation: { required: true, email: true },
       },
       {
         controlLabel: 'Password',
         controlName: 'password',
         controlType: 'password',
-        controlValidation: { required: true },
+        controlValidation: { required: true},
       },
     ];
   }
@@ -108,7 +108,7 @@ export class AuthPageComponent implements OnInit, OnDestroy {
         controlLabel: 'Username',
         controlName: 'username',
         controlType: 'text',
-        controlValidation: { required: false },
+        controlValidation: { required: true },
       },
       {
         controlLabel: 'Full Name',
@@ -120,13 +120,13 @@ export class AuthPageComponent implements OnInit, OnDestroy {
         controlLabel: 'Phone Number',
         controlName: 'phone',
         controlType: 'text',
-        controlValidation: {},
+        controlValidation: {phoneNumber: true},
       },
       {
         controlLabel: 'Age',
         controlName: 'age',
         controlType: 'text',
-        controlValidation: {},
+        controlValidation: { age: true },
       },
       {
         controlLabel: 'City',
@@ -144,13 +144,13 @@ export class AuthPageComponent implements OnInit, OnDestroy {
         controlLabel: 'Email',
         controlName: 'email',
         controlType: 'email',
-        controlValidation: { required: true },
+        controlValidation: { required: true, email: true },
       },
       {
         controlLabel: 'Password',
         controlName: 'password',
         controlType: 'password',
-        controlValidation: { required: true },
+        controlValidation: { required: true, newPassword: true },
       },
     ];
   }
@@ -161,7 +161,7 @@ export class AuthPageComponent implements OnInit, OnDestroy {
         controlLabel: 'Email',
         controlName: 'email',
         controlType: 'email',
-        controlValidation: { required: true },
+        controlValidation: { required: true, email: true },
       },
     ];
   }
