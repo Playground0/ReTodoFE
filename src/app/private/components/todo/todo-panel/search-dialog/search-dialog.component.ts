@@ -66,8 +66,8 @@ export class SearchDialogComponent implements OnInit, AfterViewInit {
       next: (res: boolean) => {
         if (res) {
           this.searchTasks(this.currrentQuery);
+          this.commonService.setUndoAction(false);
         }
-        this.commonService.setUndoAction(false);
       },
     });
   }

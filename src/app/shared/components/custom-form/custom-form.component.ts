@@ -1,8 +1,7 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ICustomFormBody } from '../../model/form.model';
 import { FormsService } from '../../service/forms.service';
-import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'rtd-custom-form',

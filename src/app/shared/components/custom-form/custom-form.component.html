@@ -19,7 +19,7 @@
         <input
           *ngIf="control.controlType === 'email'"
           matInput
-          [type]="control.controlType"
+          type="email"
           placeholder="Enter your email"
           [formControlName]="control.controlName"
         />
@@ -57,6 +57,18 @@
             {{ control.controlLabel | titlecase }} must be at least
             {{ form.get(control.controlName)?.errors?.['minlength'].requiredLength }}
             characters long.
+          </span>
+          <span *ngIf="form.get(control.controlName)?.errors?.['email']">
+            Needs a valid email
+          </span>
+          <span *ngIf="form.get(control.controlName)?.errors?.['passwordStrength']">
+            Password must be at least 8 characters long, contain uppercase and lowercase letters, a number, and a special character.
+          </span>
+          <span *ngIf="form.get(control.controlName)?.errors?.['invalidAge']">
+            Please enter a valid age between 1 and 120.
+          </span>
+          <span *ngIf="form.get(control.controlName)?.errors?.['invalidPhoneNumber']">
+            Please enter a valid 10-digit phone number.
           </span>
           <!-- Add more validation error messages as needed -->
         </mat-error>
