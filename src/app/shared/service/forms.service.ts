@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ICustomFormBody, IFormControlBody } from '../model/form.model';
+import { IFormControlBody } from '../model/form.model';
 import { BehaviorSubject } from 'rxjs';
+import { passwordStrengthValidator } from '../validators/passwordStrength.validator';
+import { ageValidator } from '../validators/ageValidator.validator';
+import { phoneNumberValidator } from '../validators/phoneNumber.validator';
 
 @Injectable({
   providedIn: 'root',
@@ -27,22 +30,41 @@ export class FormsService {
     if (!validators) return [];
     const result = [];
     for (const validation of Object.keys(validators)) {
-      if (validation === 'required') {
-        result.push(Validators.required);
-      } else if (validation === 'minLength') {
-        result.push(Validators.minLength(validators.minLength));
-      } else if (validation === 'maxLength') {
-        result.push(Validators.maxLength(validators.maxLength));
-      } // TODO: Add more validators as needed
+      const value = validators[validation];
+      if (!value) {
+        continue;
+      }
+      switch (validation) {
+        case 'required':
+          result.push(Validators.required);
+          break;
+        case 'minLength':
+          result.push(Validators.minLength(validators.minLength));
+          break;
+        case 'maxLength':
+          result.push(Validators.maxLength(validators.maxLength));
+          break;
+        case 'email':
+          result.push(Validators.email);
+          break;
+        case 'newPassword':
+          result.push(passwordStrengthValidator());
+          break;
+        case 'age':
+          result.push(ageValidator());
+          break;
+        case 'phoneNumber':
+          result.push(phoneNumberValidator());
+          break;
+      }
     }
     return result;
   }
-  //It sets the current value of the form
+
   set currentData(value: any) {
     this.formData.next(value);
   }
 
-  //Get only the currentvalue of the data
   get currentData() {
     return this.formData.value;
   }
