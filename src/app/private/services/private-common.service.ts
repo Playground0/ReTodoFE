@@ -36,13 +36,10 @@ export class PrivateCommonService {
 
   public addTask(
     task: ITask,
-    isDefaultList = true,
-    currentPanel = '0'
   ): Observable<ITask> {
-    const isDefaultPanel = isDefaultList;
     let newTask: ITaskCreate = {
       userId: this.UserId,
-      currentListId: !isDefaultPanel ? currentPanel : '0',
+      currentListId: task.currentListId,
       previousListID: '0',
       taskTitle: task.taskTitle,
       taskDesc: task.taskDesc,
