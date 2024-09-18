@@ -1,17 +1,17 @@
 @import "../../../../styles.scss";
 
 .content {
-  margin: 1rem 8rem;
+  margin: 2rem 2rem;
   padding: 2rem 4rem;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   box-shadow: $default-shadow;
   border-radius: 20px;
-  border: 2px solid $secondary-color;
   font-size: x-large;
   gap: 2rem;
-  color: $text-color;
+  color: $text-color-2;
+  background-color: $secondary-color;
 
   p{
     font-weight: 100;
@@ -34,5 +34,16 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    background-color: $background-color;
+    color: $text-color;
+    padding: 2rem 4rem;
+    border-radius: 20px;
+    box-shadow: $default-shadow;
+    transition: 0.8s;
+  }
+
+  .main-info:hover{
+    background-color: $primary-color;
+    color: $text-color-2;
   }
 }

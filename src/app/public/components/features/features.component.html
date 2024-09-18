@@ -1,0 +1,79 @@
+<div class="content">
+  <!-- Key Features -->
+  <div class="section">
+    <span class="section-header"><mat-icon>star</mat-icon>Key Features:</span>
+    <div class="features">
+      <div class="card" *ngFor="let features of keyFeatures">
+        <span class="card-header"
+          ><mat-icon *ngIf="features.matIcon">{{ features.matIcon }}</mat-icon
+          >{{ features.title }}</span
+        >
+        <p>{{ features.description }}</p>
+        <div *ngIf="features.details">
+          <strong>Details:</strong>
+          <ul>
+            <li *ngFor="let detail of features.details">{{ detail }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Feature Description -->
+  <div class="section">
+    <span class="section-header">
+      <mat-icon>description</mat-icon>Feature Description:</span
+    >
+    <div class="features">
+      <div class="card" *ngFor="let features of detailedFeatureDesc">
+        <span class="card-header">
+          <mat-icon *ngIf="features.matIcon">{{ features.matIcon }}</mat-icon
+          >{{ features.title }}</span
+        >
+        <p>{{ features.description }}</p>
+        <div *ngIf="features.details">
+          <strong>Details:</strong>
+          <ul>
+            <li *ngFor="let detail of features.details">{{ detail }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-sections" *ngIf="!isHome">
+    <div class="section">
+      <span class="section-header"> <mat-icon>update</mat-icon>Upcoming:</span>
+      <div class="card">
+        <ul>
+          <li>Quick filters for Today, Tomorrow, This Week.</li>
+          <li>Custom date range filtering for specific time frames.</li>
+          <li>Auto-save feature to prevent losing task details.</li>
+          <li>Dark and light mode options for comfortable viewing.</li>
+        </ul>
+      </div>
+    </div>
+    <!-- What sets up apart -->
+    <div class="section">
+      <span class="section-header"
+        ><mat-icon>emoji_events</mat-icon>What sets us apart:</span
+      >
+      <div class="card">
+        <span>
+          Retodo is designed to be a no-fuss, straightforward task management
+          tool. With an emphasis on simplicity and utility, it offers essential
+          features without the clutter</span
+        >
+        <ul>
+          <li>
+            Focused on core task management features without unnecessary
+            distractions.
+          </li>
+          <li>Recurring task functionality that saves time and effort.</li>
+          <li>Fast performance with an emphasis on smooth user experience.</li>
+          <li>Regular updates and improvements based on user feedback.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- Upcoming -->
+  
+</div>
