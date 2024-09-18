@@ -3,8 +3,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { AuthPageComponent } from './components/auth-page/auth-page.component';
 import { AboutusComponent } from './components/aboutus/aboutus.component';
-import { DemoComponent } from './components/demo/demo.component';
 import { ResetPasswordComponent } from './components/auth-page/reset-password/reset-password.component';
+import { FeaturesComponent } from './components/features/features.component';
+import { ForumComponent } from './components/forum/forum.component';
 
 const routes: Routes = [
   {
@@ -20,12 +21,12 @@ const routes: Routes = [
     component: AboutusComponent,
   },
   {
-    path: 'demo',
-    component: DemoComponent,
+    path: 'features',
+    component: FeaturesComponent,
   },
   {
-    path: 'features',
-    component: AboutusComponent,
+    path: 'forum',
+    component: ForumComponent,
   },
   {
     path: 'reset-password/:token',
