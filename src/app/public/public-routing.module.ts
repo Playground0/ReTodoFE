@@ -6,6 +6,7 @@ import { AboutusComponent } from './components/aboutus/aboutus.component';
 import { ResetPasswordComponent } from './components/auth-page/reset-password/reset-password.component';
 import { FeaturesComponent } from './components/features/features.component';
 import { ForumComponent } from './components/forum/forum.component';
+import { DonationComponent } from './components/donation/donation.component';
 
 const routes: Routes = [
   {
@@ -31,7 +32,8 @@ const routes: Routes = [
   {
     path: 'reset-password/:token',
     component: ResetPasswordComponent,
-  }
+  },
+  { path: 'donation', component: DonationComponent },
 ];
 
 @NgModule({

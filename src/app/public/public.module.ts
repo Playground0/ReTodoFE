@@ -12,6 +12,7 @@ import { ResetPasswordComponent } from './components/auth-page/reset-password/re
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FeaturesComponent } from './components/features/features.component';
 import { ForumComponent } from './components/forum/forum.component';
+import { DonationComponent } from './components/donation/donation.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { ForumComponent } from './components/forum/forum.component';
     ResetPasswordComponent,
     FeaturesComponent,
     ForumComponent,
+    DonationComponent,
   ],
   imports: [
     CommonModule,
