@@ -24,6 +24,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
       label: 'Forum',
     },
     {
+      link: '/donation',
+      label: 'Donate',
+    },
+    {
       link: '/features',
       label: 'Features',
     },
@@ -41,6 +45,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     {
       link: '/forum',
       label: 'Forum',
+    },
+    {
+      link: '/donation',
+      label: 'Donate',
     },
     {
       link: '/features',
