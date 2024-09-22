@@ -20,7 +20,7 @@ import {
 })
 //TODO: Refactor the whole service
 export class AuthService {
-  isLocalHost: boolean = false;
+  isLocalHost: boolean = true;
   private apiUrl: string = this.isLocalHost
     ? 'http://localhost:8000/api/v1'
     : 'https://retodobe.onrender.com/api/v1';

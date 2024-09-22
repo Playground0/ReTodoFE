@@ -9,7 +9,7 @@ export class DateOverduePipe implements PipeTransform {
   transform(dueDate: string): unknown {
     if (!dueDate) return false;
     const currentDate = dayjs()
-    return currentDate.isAfter(dayjs(dueDate), 'day');
+    return currentDate.isAfter(dayjs(dueDate));
   }
 
 }
