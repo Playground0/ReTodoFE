@@ -3,7 +3,7 @@
 .nav{
     display: grid;
     gap: 1rem;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(7, 1fr);
     place-items: center;
     position: fixed;
     top: 0;
@@ -39,7 +39,7 @@
 
     a{
         cursor: pointer;
-        font-size: 22px;
+        font-size: 19px;
         width: 30%;
         font-weight: bold;
         color: $text-color;

@@ -1,0 +1,21 @@
+
+<div class="content">
+    <div class="panel">
+        <span>Thanks for having the thought to donate! You are awesome</span>
+        <span>You can use these options to donate</span>
+        <div class="panel-link" (click)="upi = true; razorPay = false">
+            UPI
+        </div>
+        <div class="panel-link" (click)="razorPay = true; upi= false">
+            RazorPay
+        </div>
+    </div>
+    <div class="images">
+        <div class="UPI" *ngIf="upi">
+            <img src="../../../../assets/UPI.jpg" alt="">
+        </div>
+        <div class="razor-pay" *ngIf="razorPay">
+            <span>Integration in progress</span>
+        </div>
+    </div>
+</div>

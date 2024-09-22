@@ -3,8 +3,9 @@
 .content {
   background-color: $background-color;
   border-radius: 100px;
-  margin-top: 1rem;
+  margin: 1rem 2rem;
   border: 2px solid $secondary-color;
+  box-shadow: $default-shadow;
 }
 .content .welcome-text span {
   font-size: 100px;

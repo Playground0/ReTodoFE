@@ -20,12 +20,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
   //TODD: Create backend servies for these navs
   defaultNavConfig = [
     {
-      link: '/aboutus',
-      label: 'News',
+      link: '/forum',
+      label: 'Forum',
     },
     {
-      link: '/demo',
-      label: 'Demo',
+      link: '/donation',
+      label: 'Donate',
+    },
+    {
+      link: '/features',
+      label: 'Features',
     },
     {
       link: '/aboutus',
@@ -39,11 +43,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   loggedInNavConfig = [
     {
-      link: '/aboutus',
-      label: 'News',
+      link: '/forum',
+      label: 'Forum',
     },
     {
-      link: '/aboutus',
+      link: '/donation',
+      label: 'Donate',
+    },
+    {
+      link: '/features',
       label: 'Features',
     },
     {
