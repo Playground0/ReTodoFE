@@ -12,7 +12,7 @@ export interface IUpdateUser {
   userId: string;
   email: string;
   username: string;
-  fullname: string;
-  age: string;
-  profilePicture: string;
+  fullname?: string;
+  age?: string;
+  profilePicture?: string;
 }
