@@ -39,7 +39,7 @@ export class PrivateCommonService {
   ): Observable<ITask> {
     let newTask: ITaskCreate = {
       userId: this.UserId,
-      currentListId: task.currentListId,
+      currentListId: task.currentListId ? task.currentListId : '0',
       previousListID: '0',
       taskTitle: task.taskTitle,
       taskDesc: task.taskDesc,
