@@ -14,7 +14,8 @@
   <form class="form" [formGroup]="taskForm">
     <mat-form-field>
       <mat-label>Title</mat-label>
-      <input matInput formControlName="taskTitle" type="text" />
+      <input matInput #tilteInput formControlName="taskTitle" type="text" />
+      <mat-error>Title is required</mat-error>
     </mat-form-field>
 
     <mat-form-field>
@@ -58,6 +59,7 @@
             [for]="picker"
           ></mat-datepicker-toggle>
           <mat-date-range-picker #picker></mat-date-range-picker>
+          <mat-error>This is required for recurring tasks</mat-error>
         </mat-form-field>
 
         <div class="time-picker">
@@ -90,7 +92,7 @@
         </p>
         <p *ngIf="!data || (data && !data.isRecurring)" class="slide-toggle">
           <mat-slide-toggle
-            formControlName="isRecurring"
+            formControlName="isRecurring" (change)="setDatesAsRequired($event)"
             >Is it recurring?</mat-slide-toggle
           >
         </p>
@@ -114,7 +116,7 @@
     mat-button
     cdkFocusInitial
     [disabled]="!dataChanged"
-    *ngIf="data"
+    *ngIf="data && dataChanged"
     (click)="saveData()"
   >
     Save
