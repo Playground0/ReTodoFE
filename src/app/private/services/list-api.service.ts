@@ -22,8 +22,8 @@ export class ListApiService {
     this.listApiUrl = this.authService.getApiUrl() + '/list';
   }
 
-  public getAll(userId: string): Observable<IList[]> {
-    let url = `${this.listApiUrl}/${userId}`;
+  public getAll(): Observable<IList[]> {
+    let url = `${this.listApiUrl}`;
     return this.http
       .get<IAPIResponse>(url)
       .pipe(map((res: IAPIResponse) => this.setupData(res)));
@@ -35,8 +35,8 @@ export class ListApiService {
       .pipe(map((res) => this.setupData(res)));
   }
 
-  public deleteList(listId: string, userId: string): Observable<any> {
-    const request = { listId, userId };
+  public deleteList(listId: string): Observable<any> {
+    const request = { listId };
     let url = `${this.listApiUrl}/delete`;
     return this.http
       .patch<IAPIResponse>(url, request)
@@ -49,24 +49,24 @@ export class ListApiService {
       .pipe(map((res) => this.setupData(res)));
   }
 
-  public archiveList(listId: string, userId: string): Observable<any> {
-    const request = { listId, userId };
+  public archiveList(listId: string): Observable<any> {
+    const request = { listId };
     let url = `${this.listApiUrl}/archive`;
     return this.http
       .patch<IAPIResponse>(url, request)
       .pipe(map((res) => this.setupData(res)));
   }
 
-  public hideList(listId: string, userId: string): Observable<any> {
-    const request = { listId, userId };
+  public hideList(listId: string): Observable<any> {
+    const request = { listId };
     let url = `${this.listApiUrl}/hide`;
     return this.http
       .patch<IAPIResponse>(url, request)
       .pipe(map((res) => this.setupData(res)));
   }
 
-  public undoListAction(listId: string, userId: string, undoAction: string) {
-    const request = { listId, userId };
+  public undoListAction(listId: string, undoAction: string) {
+    const request = { listId };
     let url = `${this.listApiUrl}-undo/${undoAction}`;
     return this.http
       .patch<IAPIResponse>(url, request)
@@ -74,24 +74,21 @@ export class ListApiService {
   }
 
   public getDeletedList() {
-    const userId = this.localDataService.localUserData;
-    let url = `${this.listApiUrl}/${userId}/deletedList`;
+    let url = `${this.listApiUrl}/deletedList`;
     return this.http
     .get<IAPIResponse>(url)
     .pipe(map((res: IAPIResponse) => this.setupData(res)));
   }
 
   public getArchivedList() {
-    const userId = this.localDataService.localUserData;
-    let url = `${this.listApiUrl}/${userId}/archivedList`;
+    let url = `${this.listApiUrl}/archivedList`;
     return this.http
     .get<IAPIResponse>(url)
     .pipe(map((res: IAPIResponse) => this.setupData(res)));
   }
 
   public getHiddenList() {
-    const userId = this.localDataService.localUserData;
-    let url = `${this.listApiUrl}/${userId}/hiddenList`;
+    let url = `${this.listApiUrl}/hiddenList`;
     return this.http
     .get<IAPIResponse>(url)
     .pipe(map((res: IAPIResponse) => this.setupData(res)));

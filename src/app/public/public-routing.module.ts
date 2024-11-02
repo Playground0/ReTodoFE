@@ -30,7 +30,7 @@ const routes: Routes = [
     component: ForumComponent,
   },
   {
-    path: 'reset-password/:token',
+    path: 'reset-password/:token/:email',
     component: ResetPasswordComponent,
   },
   { path: 'donation', component: DonationComponent },

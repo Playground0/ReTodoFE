@@ -24,25 +24,19 @@ export class UserApiService {
   }
 
   getUserDetails() {
-    const user: IUser = this.localDataService.localUserData as IUser;
-    const url = `${this.userAPIUrl}/${user.id}`;
     return this.http
-      .get<IAPIResponse>(url)
+      .get<IAPIResponse>(this.userAPIUrl)
       .pipe(map((res: IAPIResponse) => this.setupData(res)));
   }
 
   udpateUserDetails(userDetails: IUpdateUser) {
-    const user = this.localDataService.localUserData as IUser;
-    userDetails.userId = user.id;
     return this.http
       .patch<IAPIResponse>(this.userAPIUrl, userDetails)
       .pipe(map((res) => this.setupData(res)));
   }
 
   deleteUser() {
-    const user = this.localDataService.localUserData as IUser;
-    const url = `${this.userAPIUrl}/${user.id}`;
-    return this.http.delete<IAPIResponse>(url).pipe(
+    return this.http.delete<IAPIResponse>(this.userAPIUrl).pipe(
       tap(() => {
         this.localDataService.localTokenData = '';
         this.localDataService.localUserData = {};
@@ -61,11 +55,11 @@ export class UserApiService {
       .pipe(map((res) => this.setupData(res)));
   }
 
-  getStash(){
-    const userId =(this.localDataService.localUserData as IUser).id;
-    const url = `${this.userAPIUrl}/stash/${userId}`;
-
-    return this.http.get<IAPIResponse>(url).pipe(map((res) => this.setupData(res)))
+  getStash() {
+    const url = `${this.userAPIUrl}/stash`;
+    return this.http
+      .get<IAPIResponse>(url)
+      .pipe(map((res) => this.setupData(res)));
   }
 
   private setupData(res: IAPIResponse): any {

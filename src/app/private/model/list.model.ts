@@ -15,7 +15,6 @@ export interface IList {
 
 export interface IListCreate {
   listTitle: string;
-  userId: string;
 }
 
 export interface IListUpdate {

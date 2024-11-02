@@ -23,6 +23,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   newPass = '';
   reEnterPass = '';
   token = '';
+  email= '';
   customFormBody!: ICustomFormBody;
 
   authPageType = AuthPageType;
@@ -37,6 +38,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   ) {
     this.activatedRoute.params.subscribe((param) => {
       this.token = param['token'];
+      this.email = param['email'];
     });
   }
 
@@ -94,7 +96,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   }
 
   resetPassword(password: string) {
-    this.authService.resetPassword(this.token, password).subscribe({
+    this.authService.resetPassword(this.email, this.token, password).subscribe({
       next: (res) => {
         if (res.Status === APIStatusMessage.Success) {
           const config: MatSnackBarConfig = {

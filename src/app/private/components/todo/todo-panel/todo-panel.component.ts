@@ -69,10 +69,9 @@ export class TodoPanelComponent implements OnDestroy {
   }
 
   public deleteList(panelLink: IPanelLink) {
-    const userId = this.getUserId();
     this.subscription.add(
       this.listService
-        .deleteList(panelLink.link, userId)
+        .deleteList(panelLink.link)
         .pipe(tap(() => this.refreshData()))
         .subscribe({
           next: (res) => {
@@ -87,10 +86,9 @@ export class TodoPanelComponent implements OnDestroy {
   }
 
   public hidelist(panelLink: IPanelLink) {
-    const userId = this.getUserId();
     this.subscription.add(
       this.listService
-        .hideList(panelLink.link, userId)
+        .hideList(panelLink.link)
         .pipe(tap(() => this.refreshData()))
         .subscribe({
           next: (res) => {
@@ -105,10 +103,9 @@ export class TodoPanelComponent implements OnDestroy {
   }
 
   public archivelist(panelLink: IPanelLink) {
-    const userId = this.getUserId();
     this.subscription.add(
       this.listService
-        .archiveList(panelLink.link, userId)
+        .archiveList(panelLink.link)
         .pipe(tap(() => this.refreshData()))
         .subscribe({
           next: (res) => {
@@ -132,11 +129,6 @@ export class TodoPanelComponent implements OnDestroy {
     this.sendViewAction(panel);
     this.refreshUserLists.emit(true);
   };
-
-  private getUserId(): string {
-    const user: IUser = this.commonService.UserData as IUser;
-    return user.id;
-  }
 
   private openUndoSnackBar(
     listId: string,
@@ -162,7 +154,7 @@ export class TodoPanelComponent implements OnDestroy {
   private undoList(listId: string, action: string) {
     this.subscription.add(
       this.listService
-        .undoListAction(listId, this.getUserId(), action)
+        .undoListAction(listId, action)
         .pipe(tap(() => this.refreshUserLists.emit(true)))
         .subscribe()
     );

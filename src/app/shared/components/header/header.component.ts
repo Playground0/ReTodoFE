@@ -75,7 +75,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.authService.isUserLoggedIn$.subscribe({
         next: (status: boolean) => {
-          if (status || this.authService.isAuthenticated()) {
+          if (status || this.authService.isLoggedIn()) {
             this.navConfig = this.loggedInNavConfig;
             this.showPrivate = true;
             this.authService.confirmUserLoggedIn();
