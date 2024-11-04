@@ -20,13 +20,7 @@ export class PrivateCommonService {
     private _snackBar: MatSnackBar
   ) {}
 
-  public get UserData() {
-    return this.localDataService.localUserData;
-  }
 
-  public get UserId(): string {
-    return (this.localDataService.localUserData as IUser).id;
-  }
 
   private get snackBarConfig(): MatSnackBarConfig {
     return {
@@ -38,8 +32,7 @@ export class PrivateCommonService {
     task: ITask,
   ): Observable<ITask> {
     let newTask: ITaskCreate = {
-      userId: this.UserId,
-      currentListId: task.currentListId,
+      currentListId: task.currentListId ? task.currentListId : '0',
       previousListID: '0',
       taskTitle: task.taskTitle,
       taskDesc: task.taskDesc,
@@ -62,7 +55,6 @@ export class PrivateCommonService {
       taskId: data._id,
       currentListId: data.currentListId,
       previousListID: data.previousListID,
-      userId: data.userId,
       taskTitle: data.taskTitle,
       taskStartDate: data.taskStartDate,
       taskEndDate: data.taskEndDate,
@@ -81,7 +73,7 @@ export class PrivateCommonService {
 
   public deleteTask(taskId: string) {
     return this.taskApiService
-      .deleteTask(this.UserId, taskId)
+      .deleteTask(taskId)
       .pipe(
         tap(() =>
           this.openUndoSnackBar(
@@ -93,13 +85,13 @@ export class PrivateCommonService {
       );
   }
 
-  public completeTask(id: string) {
+  public completeTask(taskId: string) {
     return this.taskApiService
-      .markAsCompleteTask(id, this.UserId)
+      .markAsCompleteTask(taskId)
       .pipe(
         tap(() =>
           this.openUndoSnackBar(
-            id,
+            taskId,
             TaskActions.Complete,
             SnackBarAction.TaskCompleted
           )
@@ -125,7 +117,7 @@ export class PrivateCommonService {
 
   private undoTask(taskId: string, taskAction: TaskActions) {
     return this.taskApiService
-      .undoTaskAction(taskId, this.UserId, taskAction)
+      .undoTaskAction(taskId, taskAction)
       .subscribe({
         next: (res) => {
           this.setUndoAction(true);

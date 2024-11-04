@@ -23,6 +23,9 @@ export class AuthPageComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
   private currentRoute = '';
   public runFunction!: Function;
+  private config: MatSnackBarConfig = {
+    duration: 5 * 1000,
+  };
 
   functionMap: { [key: string]: Function } = {
     login: (param: any) => this.login(param),
@@ -196,12 +199,15 @@ export class AuthPageComponent implements OnInit, OnDestroy {
     this.authService.forgotPassword(formData?.email as string).subscribe({
       next: (res:IAPIResponse) => {
         if(res.Status === APIStatusMessage.Success){
-          const config: MatSnackBarConfig = {
-            duration: 5 * 1000,
-          };
-          this._snackBar.open(res.Message,'',config);
+          this._snackBar.open(res.Message,'',this.config);
           console.log(res.Message)
           this.router.navigateByUrl('/auth/login')
+        }
+      },
+      error: (errResponse) => {
+        const error = errResponse.error;
+        if(error.Code === 404){
+          this._snackBar.open(error.Message,'',this.config)
         }
       }
     });

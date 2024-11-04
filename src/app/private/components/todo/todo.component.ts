@@ -10,7 +10,8 @@ import { TaskAPIService } from '../../services/task-api.service';
 import { DefaultPanels } from '../../model/UI/tasks.contanst';
 import { ListApiService } from '../../services/list-api.service';
 import { IList, IListCreate } from '../../model/list.model';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-todo',
@@ -46,7 +47,6 @@ export class TodoComponent implements OnInit, OnDestroy {
     },
   ];
 
-  private userId = '';
   public tasks: ITask[] = [];
   public runFuntion!: Function;
   public listTitle: string = '';
@@ -58,6 +58,9 @@ export class TodoComponent implements OnInit, OnDestroy {
   public userLists: IPanelLink[] = [];
   public listForm: FormGroup;
   isCreatingList = false;
+  snackBarConfig: MatSnackBarConfig = {
+    duration: 2000
+  }
 
   constructor(
     private commonService: PrivateCommonService,
@@ -66,15 +69,15 @@ export class TodoComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private listService: ListApiService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {
     this.listForm = this.fb.group({
-      listTitle: [''],
+      listTitle: ['', Validators.required],
     });
   }
 
   public ngOnInit(): void {
-    this.userId = this.getUserId();
     this.refreshUserLists();
     this.checkRouteAndSetupPage();
     this.trackUndoAction();
@@ -122,14 +125,9 @@ export class TodoComponent implements OnInit, OnDestroy {
     this.listTitle = title;
   }
 
-  private getUserId(): string {
-    const user: IUser = this.commonService.UserData as IUser;
-    return user.id;
-  }
-
-  private getTasks(userId: string, link: string) {
+  private getTasks(link: string) {
     this.subscription.add(
-      this.taskApiService.getTasks(userId, link).subscribe({
+      this.taskApiService.getTasks(link).subscribe({
         next: (res: ITask[]) => {
           this.tasks = res.sort(this.compareTasks);
         },
@@ -156,10 +154,10 @@ export class TodoComponent implements OnInit, OnDestroy {
   }
 
   private refreshCurrentList = () => {
-    this.getTasks(this.userId, this.currentPanel);
+    this.getTasks(this.currentPanel);
   };
 
-  private refreshUserLists = () => this.getLists(this.userId);
+  private refreshUserLists = () => this.getLists();
 
   private refreshUserListTask = () => this.getTasksForList(this.currentPanel);
 
@@ -189,9 +187,9 @@ export class TodoComponent implements OnInit, OnDestroy {
     return b.priority - a.priority; // Descending order for priority
   }
 
-  private getLists(userId: string) {
+  private getLists() {
     this.subscription.add(
-      this.listService.getAll(userId).subscribe({
+      this.listService.getAll().subscribe({
         next: (res: IList[]) => {
           this.userLists = res.map((list) => {
             return {
@@ -213,8 +211,11 @@ export class TodoComponent implements OnInit, OnDestroy {
   }
 
   public addNewLIst() {
+    if(this.listForm.invalid){
+      this.listForm.markAllAsTouched()
+      return
+    }
     const newList: IListCreate = this.listForm.value;
-    newList.userId = this.userId;
     this.subscription.add(
       this.listService
         .createList(newList)
@@ -224,13 +225,21 @@ export class TodoComponent implements OnInit, OnDestroy {
             this.toggleListForm();
           })
         )
-        .subscribe()
+        .subscribe({
+          next: (res: IList) => {
+            this.snackBar.open(`${res.listTitle} is created!!`, '', this.snackBarConfig)
+          },
+          error: (err) => {
+            const error = err.error;
+            this.snackBar.open(error.Message, '', this.snackBarConfig)
+          }
+        })
     );
   }
 
   public getTasksForList(listId: string) {
     this.subscription.add(
-      this.taskApiService.getCustomListTask(this.userId, listId).subscribe({
+      this.taskApiService.getCustomListTask(listId).subscribe({
         next: (res) => {
           this.tasks = res.sort(this.compareTasks);
         },

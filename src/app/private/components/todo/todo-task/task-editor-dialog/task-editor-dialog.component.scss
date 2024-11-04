@@ -39,6 +39,7 @@ h2 {
 .form {
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
 
   .subheading-date-time {
     display: flex;

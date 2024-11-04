@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -16,6 +16,7 @@ import {
 import { IDialogData, ITaskUI } from 'src/app/private/model/UI/task-ui';
 import { DateService } from 'src/app/shared/service/date.service';
 import { Subscription } from 'rxjs';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-task-editor-dialog',
@@ -23,7 +24,8 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./task-editor-dialog.component.scss'],
 })
 //TODO: Refactor the whole component
-export class TaskEditorDialogComponent implements OnInit, OnDestroy {
+export class TaskEditorDialogComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('tilteInput') titleInput!: ElementRef;
   taskForm!: FormGroup;
   minDate = '';
   showTimePicker = false;
@@ -69,6 +71,12 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
     this.setupFormSubscription();
     this.setupDatesOnPanel();
     this.minDate = this.dateService.getStartOfDay();
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.titleInput.nativeElement.focus();
+    });
   }
 
   initializeForm() {
@@ -129,7 +137,7 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
     );
     this.subscription.add(
       this.taskForm.valueChanges.subscribe((values) =>
-        this.checkDataChanges(values)
+        this.checkDataChange(values)
       )
     );
   }
@@ -145,7 +153,7 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkDataChanges(data: ITask) {
+  checkDataChange(data: ITask) {
     if (data) {
       const currentFormData = this.taskForm.value;
       this.dataChanged = !this.isFormValueEqual(
@@ -156,8 +164,7 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
   }
 
   addTask() {
-    if (this.taskForm.invalid) {
-      this.taskForm.markAsTouched();
+    if (!this.isFormValid()) {
       return;
     }
     this.setupDateAndTime();
@@ -173,6 +180,9 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
   }
 
   saveData() {
+    if (!this.isFormValid()) {
+      return;
+    }
     this.setupDateAndTime();
     const updateData = this.data as ITask;
     updateData.taskTitle = this.taskForm.get('taskTitle')?.value;
@@ -203,7 +213,6 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
 
   isFormValueEqual(initialValue: any, currentValue: any): boolean {
     // Logic to compare form values
-    // You may need to implement custom comparison logic based on your specific requirements
     return JSON.stringify(initialValue) === JSON.stringify(currentValue);
   }
 
@@ -266,14 +275,18 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
     if (time) {
       this.updateDateWithTime(startDate, time, 'taskStartDate');
       this.updateDateWithTime(endDate, time, 'taskEndDate');
-      return
+      return;
     }
 
     this.setStartOfDay(startDate, 'taskStartDate');
     this.setStartOfDay(endDate, 'taskEndDate');
   }
 
-  private updateDateWithTime(date: string | null, time: string, controlName: string) {
+  private updateDateWithTime(
+    date: string | null,
+    time: string,
+    controlName: string
+  ) {
     if (date) {
       const formattedDate = this.setTime(time, date);
       this.taskForm.get(controlName)?.setValue(formattedDate);
@@ -290,6 +303,24 @@ export class TaskEditorDialogComponent implements OnInit, OnDestroy {
   setupTimeSlots() {
     const times = this.generateTimeSlots();
     this.timeSlots = this.filterValidTimeSlots(times);
+  }
+
+  setDatesAsRequired(event: MatSlideToggleChange) {
+    if (event.checked) {
+      this.taskForm.get('taskStartDate')?.addValidators([Validators.required]);
+      this.taskForm.get('taskEndDate')?.addValidators([Validators.required]);
+      return;
+    }
+    this.taskForm.get('taskStartDate')?.removeValidators([Validators.required]);
+    this.taskForm.get('taskEndDate')?.removeValidators([Validators.required]);
+  }
+
+  isFormValid(): boolean {
+    if (this.taskForm.invalid) {
+      this.taskForm.markAllAsTouched();
+      return false;
+    }
+    return true;
   }
 
   ngOnDestroy(): void {
