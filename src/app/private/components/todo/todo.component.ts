@@ -47,7 +47,6 @@ export class TodoComponent implements OnInit, OnDestroy {
     },
   ];
 
-  private userId = '';
   public tasks: ITask[] = [];
   public runFuntion!: Function;
   public listTitle: string = '';
@@ -79,7 +78,6 @@ export class TodoComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.userId = this.getUserId();
     this.refreshUserLists();
     this.checkRouteAndSetupPage();
     this.trackUndoAction();
@@ -127,14 +125,9 @@ export class TodoComponent implements OnInit, OnDestroy {
     this.listTitle = title;
   }
 
-  private getUserId(): string {
-    const user: IUser = this.commonService.UserData as IUser;
-    return user.id;
-  }
-
-  private getTasks(userId: string, link: string) {
+  private getTasks(link: string) {
     this.subscription.add(
-      this.taskApiService.getTasks(userId, link).subscribe({
+      this.taskApiService.getTasks(link).subscribe({
         next: (res: ITask[]) => {
           this.tasks = res.sort(this.compareTasks);
         },
@@ -161,10 +154,10 @@ export class TodoComponent implements OnInit, OnDestroy {
   }
 
   private refreshCurrentList = () => {
-    this.getTasks(this.userId, this.currentPanel);
+    this.getTasks(this.currentPanel);
   };
 
-  private refreshUserLists = () => this.getLists(this.userId);
+  private refreshUserLists = () => this.getLists();
 
   private refreshUserListTask = () => this.getTasksForList(this.currentPanel);
 
@@ -194,9 +187,9 @@ export class TodoComponent implements OnInit, OnDestroy {
     return b.priority - a.priority; // Descending order for priority
   }
 
-  private getLists(userId: string) {
+  private getLists() {
     this.subscription.add(
-      this.listService.getAll(userId).subscribe({
+      this.listService.getAll().subscribe({
         next: (res: IList[]) => {
           this.userLists = res.map((list) => {
             return {
@@ -223,7 +216,6 @@ export class TodoComponent implements OnInit, OnDestroy {
       return
     }
     const newList: IListCreate = this.listForm.value;
-    newList.userId = this.userId;
     this.subscription.add(
       this.listService
         .createList(newList)
@@ -247,7 +239,7 @@ export class TodoComponent implements OnInit, OnDestroy {
 
   public getTasksForList(listId: string) {
     this.subscription.add(
-      this.taskApiService.getCustomListTask(this.userId, listId).subscribe({
+      this.taskApiService.getCustomListTask(listId).subscribe({
         next: (res) => {
           this.tasks = res.sort(this.compareTasks);
         },

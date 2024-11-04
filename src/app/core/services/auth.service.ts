@@ -23,12 +23,13 @@ export class AuthService {
   isLocalHost: boolean = false;
   private apiUrl: string = this.isLocalHost
     ? 'http://localhost:8000/api/v1'
-    : 'https://retodobe.onrender.com/api/v1';
+    : 'https://retodobe-production.up.railway.app/api/v1';
   private clientUrl: string = this.isLocalHost
     ? 'http://localhost:4200'
     : 'https://re-todo-fe.vercel.app';
   private isUserLoggedIn = new BehaviorSubject<boolean>(false);
   isUserLoggedIn$ = this.isUserLoggedIn.asObservable();
+  private readonly tokenCookieName = 'JWT-TOKEN';
 
   constructor(
     private http: HttpClient,
@@ -37,14 +38,16 @@ export class AuthService {
     private formService: FormsService
   ) {}
 
-  public isAuthenticated(): boolean {
+  public isLoggedIn(): boolean {
     const token = this.localDataService.localTokenData;
     return token ? true : false;
   }
   //TODO: Refactor the below code
   public login(loginDetails: ILoginUser): Observable<IAPIResponse> {
     return this.http
-      .patch<IAPIResponse>(`${this.apiUrl}/auth/login`, loginDetails)
+      .patch<IAPIResponse>(`${this.apiUrl}/auth/login`, loginDetails, {
+        withCredentials: true,
+      })
       .pipe(
         map((res: IAPIResponse) => {
           const user: IUserAPI | null = res.Data
@@ -94,17 +97,28 @@ export class AuthService {
       );
   }
 
-  public forgotPassword(email: string) : Observable<IAPIResponse>{
+  public forgotPassword(email: string): Observable<IAPIResponse> {
     const requestObject = {
       email,
-      url: this.clientUrl
-    }
-    return this.http.post<IAPIResponse>(`${this.apiUrl}/auth/forgot-password`,requestObject)
+      url: this.clientUrl,
+    };
+    return this.http.post<IAPIResponse>(
+      `${this.apiUrl}/auth/forgot-password`,
+      requestObject
+    );
   }
 
-  public resetPassword(token: string, newPassword: string) : Observable<IAPIResponse>{
-    return this.http.post<IAPIResponse>(`${this.apiUrl}/auth/reset-password`, {token,newPassword})
-  } 
+  public resetPassword(
+    email: string,
+    token: string,
+    newPassword: string
+  ): Observable<IAPIResponse> {
+    return this.http.post<IAPIResponse>(`${this.apiUrl}/auth/reset-password`, {
+      email,
+      token,
+      newPassword,
+    });
+  }
 
   //Use it when we have set this value to true manually
   public confirmUserLoggedIn() {
@@ -120,5 +134,63 @@ export class AuthService {
 
   public getApiUrl() {
     return this.apiUrl;
+  }
+
+  private getTokenFromCookie(): string | null {
+    console.log(document.cookie);
+    const cookieValue = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith(`${this.tokenCookieName}`));
+    return cookieValue ? cookieValue.split('=')[1] : null;
+  }
+
+  public getJWTToken(): string | null {
+    return this.getTokenFromCookie();
+  }
+
+  hasValidToken(): boolean {
+    return !!this.getTokenFromCookie();
+  }
+
+  isTokenExpired(): boolean {
+    const token = this.getJWTToken();
+    if (!token) return true;
+
+    const expiry = JSON.parse(atob(token.split('.')[1])).exp;
+    return Math.floor(new Date().getTime() / 1000) >= expiry;
+  }
+
+  refreshAccessTokens(): Observable<any> {
+    return this.http.get<IAPIResponse>(`${this.apiUrl}/auth/refresh-token`, {
+      withCredentials: true,
+    });
+  }
+
+  hardLogoutUser() {
+    this.localDataService.localTokenData = ''; //To bypass interceptors
+    this.http
+      .patch<IAPIResponse>(`${this.apiUrl}/auth/hard-logout-user`, {})
+      .subscribe({
+        next: (res) => {
+          if (res.Code === 200) {
+            this.localDataService.localTokenData = '';
+            this.localDataService.localUserData = '';
+            this.formService.currentData = null;
+            this.isUserLoggedIn.next(false);
+            this.router.navigateByUrl('/auth/login');
+            console.warn('User was logged out because of long inactivity!');
+          }
+        },
+        error: () => {
+          this.localDataService.localTokenData = '';
+          this.localDataService.localUserData = '';
+          this.formService.currentData = null;
+          this.isUserLoggedIn.next(false);
+          this.router.navigateByUrl('/auth/login');
+          console.warn(
+            'Cookies were not cleared but user was successfuly logged out due to inactivity!.'
+          );
+        },
+      });
   }
 }

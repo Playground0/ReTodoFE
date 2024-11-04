@@ -24,12 +24,8 @@ export class TaskAPIService {
     this.taskApiUrl = this.authSerive.getApiUrl() + '/task';
   }
 
-  public getTasks(
-    userId: string,
-    endpoint: string,
-    listid: string = ''
-  ): Observable<ITask[]> {
-    let url = `${this.taskApiUrl}/${userId}/${endpoint}`;
+  public getTasks(endpoint: string, listid: string = ''): Observable<ITask[]> {
+    let url = `${this.taskApiUrl}/${endpoint}`;
     url = listid ? `${url}/${listid}` : url;
     return this.http.get<IAPIResponse>(url).pipe(
       map((res: IAPIResponse) => {
@@ -46,11 +42,9 @@ export class TaskAPIService {
     );
   }
 
-  public getTaskDetails(userId: string, id: string): Observable<ITask> {
+  public getTaskDetails(taskId: string): Observable<ITask> {
     return this.http
-      .get<IAPIResponse>(
-        `${this.authSerive.getApiUrl()}/task-details/${userId}/${id}`
-      )
+      .get<IAPIResponse>(`${this.authSerive.getApiUrl()}/task-details/${taskId}`)
       .pipe(
         map((res) => {
           return this.setupData(res);
@@ -66,9 +60,9 @@ export class TaskAPIService {
     );
   }
 
-  public deleteTask(userId: string, taskId: string): Observable<boolean> {
+  public deleteTask(taskId: string): Observable<boolean> {
     return this.http
-      .patch<IAPIResponse>(`${this.taskApiUrl}/delete`, { userId, taskId })
+      .patch<IAPIResponse>(`${this.taskApiUrl}/delete`, { taskId })
       .pipe(
         map((res) => {
           return this.setupData(res);
@@ -76,9 +70,9 @@ export class TaskAPIService {
       );
   }
 
-  public markAsCompleteTask(taskId: string, userId: string): Observable<ITask> {
+  public markAsCompleteTask(taskId: string): Observable<ITask> {
     return this.http
-      .patch<IAPIResponse>(`${this.taskApiUrl}/complete`, { userId, taskId })
+      .patch<IAPIResponse>(`${this.taskApiUrl}/complete`, { taskId })
       .pipe(
         map((res) => {
           return this.setupData(res);
@@ -86,10 +80,9 @@ export class TaskAPIService {
       );
   }
 
-  public undoTaskAction(taskId: string, userId: string, taskAction: string) {
+  public undoTaskAction(taskId: string, taskAction: string) {
     return this.http
       .patch<IAPIResponse>(`${this.taskApiUrl}/undo/${taskAction}`, {
-        userId,
         taskId,
       })
       .pipe(
@@ -99,16 +92,15 @@ export class TaskAPIService {
       );
   }
 
-  public getCustomListTask(userId: string, listId: string) {
-    let url = `${this.taskApiUrl}/custom-list/${userId}/${listId}`;
+  public getCustomListTask(listId: string) {
+    let url = `${this.taskApiUrl}/custom-list/${listId}`;
     return this.http
       .get<IAPIResponse>(url)
       .pipe(map((res) => this.setupData(res)));
   }
 
   public searchTasks(searchQuery: string) {
-    const userId = (this.localDataService.localUserData as IUser).id;
-    const url = `${this.taskApiUrl}/${userId}?search=${searchQuery}`;
+    const url = `${this.taskApiUrl}?search=${searchQuery}`;
 
     return this.http
       .get<IAPIResponse>(url)

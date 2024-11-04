@@ -21,7 +21,6 @@ export interface ITask {
 export interface ITaskCreate {
   currentListId: string;
   previousListID: string;
-  userId: string;
   taskTitle: string;
   taskStartDate: string,
   taskEndDate: string;
@@ -36,7 +35,6 @@ export interface ITaskUpdate {
   taskId: string;
   currentListId: string;
   previousListID: string;
-  userId: string;
   taskTitle: string;
   taskStartDate: string;
   taskEndDate: string;
