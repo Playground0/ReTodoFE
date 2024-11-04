@@ -20,7 +20,7 @@ import {
 })
 //TODO: Refactor the whole service
 export class AuthService {
-  isLocalHost: boolean = false;
+  isLocalHost: boolean = window.location.hostname === 'localhost' ? true : false;
   private apiUrl: string = this.isLocalHost
     ? 'http://localhost:8000/api/v1'
     : 'https://retodobe-production.up.railway.app/api/v1';
