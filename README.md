@@ -1,4 +1,3 @@
-```markdown
 # Retodo - Frontend
 
 ## Introduction
@@ -25,7 +24,7 @@ Retodo is a simple, clutter-free to-do application that focuses on task manageme
 - npm install
 - ng serve
 
-### Contribution
+## Contribution
 - Fork or clone the repository
 - Create a new branch (feature/my-feature).
 - Make your changes and commit your changes into your own branch.
