@@ -30,3 +30,6 @@ Retodo is a simple, clutter-free to-do application that focuses on task manageme
 - Make your changes and commit your changes into your own branch.
 - Submit a pull request for dev branch.
 - Pull request to any other branch will be rejected like main.
+
+## Preview of App
+Link: [ReToDo](https://re-todo-fe.vercel.app/)
