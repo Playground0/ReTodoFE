@@ -1,4 +1,3 @@
-```markdown
 # Retodo - Frontend
 
 ## Introduction
