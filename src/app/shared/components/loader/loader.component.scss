@@ -1,0 +1,23 @@
+@import '../../../../styles.scss';
+
+.loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); // Transparent dark overlay
+  display: flex;
+  justify-content: center;
+  align-items: center;/*  */
+  z-index: 10000; // Ensure it appears on top of other elements
+}
+
+mat-spinner {
+  width: 60px;
+  height: 60px;
+}
+
+::ng-deep mat-spinner circle{
+    stroke: $primary-color;;
+}

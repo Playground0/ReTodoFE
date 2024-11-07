@@ -4,12 +4,20 @@ import {
   ICustomFormBody,
   IFormControlBody,
 } from 'src/app/shared/model/form.model';
-import { AuthPageType, ICreateUser, ILoginUser } from '../../../core/model/auth-page.model';
+import {
+  AuthPageType,
+  ICreateUser,
+  ILoginUser,
+} from '../../../core/model/auth-page.model';
 import { FormsService } from 'src/app/shared/service/forms.service';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { Subscription } from 'rxjs';
-import { APIStatusMessage, IAPIResponse } from 'src/app/shared/model/basic-api.model';
+import {
+  APIStatusMessage,
+  IAPIResponse,
+} from 'src/app/shared/model/basic-api.model';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { LoaderService } from 'src/app/shared/service/loader.service';
 
 @Component({
   selector: 'app-auth-page',
@@ -23,7 +31,7 @@ export class AuthPageComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
   private currentRoute = '';
   public runFunction!: Function;
-  private config: MatSnackBarConfig = {
+  private snackBarConfig: MatSnackBarConfig = {
     duration: 5 * 1000,
   };
 
@@ -39,15 +47,16 @@ export class AuthPageComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private _snackBar: MatSnackBar,
+    private loaderService: LoaderService
   ) {}
 
   public ngOnInit(): void {
     this.checkAndSetCustomFormConfig();
     this.subscriptions.add(
       this.formService.formData$.subscribe({
-        next: (res : ILoginUser | ICreateUser) => {
-          if(res){
-            if (this.runFunction) this.runFunction(res);  
+        next: (res: ILoginUser | ICreateUser) => {
+          if (res) {
+            if (this.runFunction) this.runFunction(res);
           }
         },
       })
@@ -58,7 +67,7 @@ export class AuthPageComponent implements OnInit, OnDestroy {
     this.activatedRoute.params.subscribe((param) => {
       this.currentRoute = param['authType'];
       this.runFunction = this.functionMap[this.currentRoute];
-      this.formService.currentData = null
+      this.formService.currentData = null;
       switch (this.currentRoute) {
         case 'login':
           this.setCustomFormConfig(
@@ -86,7 +95,7 @@ export class AuthPageComponent implements OnInit, OnDestroy {
       }
     });
   }
-  //TODO: Create backend service to get the config for authentication pages
+  //TODO: Create backend service to get the snackBarConfig for authentication pages
   // and fetech it here with only on function
   private get loginConfig(): IFormControlBody[] {
     return [
@@ -100,7 +109,7 @@ export class AuthPageComponent implements OnInit, OnDestroy {
         controlLabel: 'Password',
         controlName: 'password',
         controlType: 'password',
-        controlValidation: { required: true},
+        controlValidation: { required: true },
       },
     ];
   }
@@ -123,7 +132,7 @@ export class AuthPageComponent implements OnInit, OnDestroy {
         controlLabel: 'Phone Number',
         controlName: 'phone',
         controlType: 'text',
-        controlValidation: {phoneNumber: true},
+        controlValidation: { phoneNumber: true },
       },
       {
         controlLabel: 'Age',
@@ -170,46 +179,71 @@ export class AuthPageComponent implements OnInit, OnDestroy {
   }
 
   private login(formData: ILoginUser) {
+    this.loaderService.setLoader(true);
     this.authService.login(formData).subscribe({
       next: (res: IAPIResponse) => {
+        this.loaderService.setLoader(false);
         if (res.Status === APIStatusMessage.Success) {
-          this.formService.currentData = null
-          this.router.navigateByUrl('');
+          this.formService.currentData = null;
+          this.router.navigateByUrl('/todo/inbox');
+          this._snackBar.open('You are logged in !!', '', this.snackBarConfig);
+          return;
+        }
+        if (res.Status === APIStatusMessage.Error) {
+          this._snackBar.open(res.Message, '', this.snackBarConfig);
+          return;
         }
       },
       error: (err) => {
-        console.log(err);
+        this.handleError(err)
+        this.loaderService.setLoader(false);
       },
     });
   }
 
   private register(formData: ICreateUser) {
-    formData.userRole = 'user'
+    this.loaderService.setLoader(true);
+    formData.userRole = 'user';
     this.authService.register(formData).subscribe({
       next: (res: IAPIResponse) => {
-        if(res.Status === APIStatusMessage.Success){
-          this.formService.currentData = null
+        this.loaderService.setLoader(false);
+        if (res.Status === APIStatusMessage.Success) {
+          this.formService.currentData = null;
           this.router.navigateByUrl('/auth/login');
+          this._snackBar.open('Registration Complete, Please log in!!', '', this.snackBarConfig);
+          return;
         }
-      }
+        if (res.Status === APIStatusMessage.Error) {
+          this._snackBar.open(res.Message, '', this.snackBarConfig);
+          return;
+        }
+      },
+      error: (err) => {
+        this.handleError(err)
+        this.loaderService.setLoader(false);
+      },
     });
   }
 
   private forgotpass(formData: any) {
+    this.loaderService.setLoader(true);
     this.authService.forgotPassword(formData?.email as string).subscribe({
-      next: (res:IAPIResponse) => {
-        if(res.Status === APIStatusMessage.Success){
-          this._snackBar.open(res.Message,'',this.config);
-          console.log(res.Message)
-          this.router.navigateByUrl('/auth/login')
+      next: (res: IAPIResponse) => {
+        this.loaderService.setLoader(false);
+        if (res.Status === APIStatusMessage.Success) {
+          this._snackBar.open(res.Message, '', this.snackBarConfig);
+          this.router.navigateByUrl('/auth/login');
+          return;
+        }
+        if (res.Status === APIStatusMessage.Error) {
+          this._snackBar.open(res.Message, '', this.snackBarConfig);
+          return;
         }
       },
-      error: (errResponse) => {
-        const error = errResponse.error;
-        if(error.Code === 404){
-          this._snackBar.open(error.Message,'',this.config)
-        }
-      }
+      error: (err) => {
+        this.handleError(err)
+        this.loaderService.setLoader(false);
+      },
     });
   }
 
@@ -223,6 +257,11 @@ export class AuthPageComponent implements OnInit, OnDestroy {
       formName: formName,
       btnNames: btnActions,
     };
+  }
+
+  handleError(errorResponse: any) {
+    const error = errorResponse.error;
+    this._snackBar.open(error.Message, '', this.snackBarConfig);
   }
 
   public ngOnDestroy() {

@@ -2,7 +2,7 @@
   <div class="user-panel">
     <div
       [routerLink]="item.link"
-      class="panelAction"
+      [ngClass]="checkCurrentPanel(item) ? 'panelAction selectedPanel' : 'panelAction'"
       *ngFor="let item of panelItems"
     >
       <mat-icon *ngIf="item.link === 'dashboard'">dashboard</mat-icon>

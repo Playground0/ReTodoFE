@@ -12,9 +12,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { CustomFormComponent } from './components/custom-form/custom-form.component';
 import { DateService } from './service/date.service';
 import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
+import { LoaderComponent } from './components/loader/loader.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
-  declarations: [HeaderComponent, FooterComponent, CustomFormComponent, NotFoundPageComponent],
+  declarations: [
+    HeaderComponent,
+    FooterComponent,
+    CustomFormComponent,
+    NotFoundPageComponent,
+    LoaderComponent,
+  ],
   imports: [
     CommonModule,
     RouterModule,
@@ -24,8 +32,15 @@ import { NotFoundPageComponent } from './components/not-found-page/not-found-pag
     MatButtonModule,
     MatInputModule,
     MatIconModule,
+    MatProgressSpinnerModule,
   ],
   providers: [DateService],
-  exports: [HeaderComponent, FooterComponent, CustomFormComponent, NotFoundPageComponent],
+  exports: [
+    HeaderComponent,
+    FooterComponent,
+    CustomFormComponent,
+    NotFoundPageComponent,
+    LoaderComponent,
+  ],
 })
 export class SharedModule {}
