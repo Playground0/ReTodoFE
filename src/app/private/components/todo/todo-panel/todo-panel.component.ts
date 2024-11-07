@@ -17,8 +17,8 @@ import {
   SnackBarListAction,
 } from 'src/app/private/model/UI/tasks.contanst';
 import { ListApiService } from 'src/app/private/services/list-api.service';
-import { PrivateCommonService } from 'src/app/private/services/private-common.service';
 import { SearchDialogComponent } from './search-dialog/search-dialog.component';
+import { LoaderService } from 'src/app/shared/service/loader.service';
 
 @Component({
   selector: 'app-todo-panel',
@@ -35,11 +35,16 @@ export class TodoPanelComponent implements OnDestroy {
   constructor(
     private router: Router,
     private listService: ListApiService,
-    private commonService: PrivateCommonService,
     private _snackBar: MatSnackBar,
-    public dialog: MatDialog
-  ) {}
+    public dialog: MatDialog,
+    private loaderService: LoaderService
+  ) {
+    
+  }
 
+  public checkCurrentPanel(item: IPanelLink){
+    return this.router.url.includes(item.link)
+  }
   public sendViewAction(panelLink: IPanelLink) {
     if (panelLink.link === DefaultPanels.Search) {
       this.openSearchDialog(panelLink)
@@ -69,52 +74,67 @@ export class TodoPanelComponent implements OnDestroy {
   }
 
   public deleteList(panelLink: IPanelLink) {
+    this.loaderService.setLoader(true)
     this.subscription.add(
       this.listService
         .deleteList(panelLink.link)
         .pipe(tap(() => this.refreshData()))
         .subscribe({
           next: (res) => {
+            this.loaderService.setLoader(false)
             this.openUndoSnackBar(
               panelLink.link,
               ListActions.Delete,
               SnackBarListAction.ListDeleted
             );
           },
+          error: (err) => {
+            this.loaderService.setLoader(false)
+          }
         })
     );
   }
 
   public hidelist(panelLink: IPanelLink) {
+    this.loaderService.setLoader(true)
     this.subscription.add(
       this.listService
         .hideList(panelLink.link)
         .pipe(tap(() => this.refreshData()))
         .subscribe({
           next: (res) => {
+            this.loaderService.setLoader(false)
             this.openUndoSnackBar(
               panelLink.link,
               ListActions.Hide,
               SnackBarListAction.ListHidden
             );
           },
+          error: (err) => {
+            this.loaderService.setLoader(true)
+          }
         })
     );
   }
 
   public archivelist(panelLink: IPanelLink) {
+    this.loaderService.setLoader(true)
     this.subscription.add(
       this.listService
         .archiveList(panelLink.link)
         .pipe(tap(() => this.refreshData()))
         .subscribe({
           next: (res) => {
+            this.loaderService.setLoader(false)
             this.openUndoSnackBar(
               panelLink.link,
               ListActions.Archive,
               SnackBarListAction.ListArchived
             );
           },
+          error: (err) => {
+            this.loaderService.setLoader(false)
+          }
         })
     );
   }
@@ -152,11 +172,19 @@ export class TodoPanelComponent implements OnDestroy {
   }
 
   private undoList(listId: string, action: string) {
+    this.loaderService.setLoader(true)
     this.subscription.add(
       this.listService
         .undoListAction(listId, action)
         .pipe(tap(() => this.refreshUserLists.emit(true)))
-        .subscribe()
+        .subscribe({
+          next: (res) => {
+            this.loaderService.setLoader(false)
+          },
+          error: (err) => {
+            this.loaderService.setLoader(false)
+          } 
+        })
     );
   }
 

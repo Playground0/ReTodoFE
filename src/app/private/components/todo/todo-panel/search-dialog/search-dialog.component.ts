@@ -12,6 +12,7 @@ import { debounceTime } from 'rxjs';
 import { ITask } from 'src/app/private/model/task.model';
 import { PrivateCommonService } from 'src/app/private/services/private-common.service';
 import { TaskAPIService } from 'src/app/private/services/task-api.service';
+import { LoaderService } from 'src/app/shared/service/loader.service';
 
 @Component({
   selector: 'app-search-dialog',
@@ -30,7 +31,8 @@ export class SearchDialogComponent implements OnInit, AfterViewInit {
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private fb: FormBuilder,
     private taskService: TaskAPIService,
-    private commonService: PrivateCommonService
+    private commonService: PrivateCommonService,
+    private loaderService: LoaderService,
   ) {}
 
   ngAfterViewInit() {
@@ -73,11 +75,16 @@ export class SearchDialogComponent implements OnInit, AfterViewInit {
   }
 
   private searchTasks(searchQuery: string) {
+    this.loaderService.setLoader(true)
     this.currrentQuery = searchQuery;
     this.taskService.searchTasks(searchQuery).subscribe({
       next: (res: ITask[]) => {
+        this.loaderService.setLoader(false)
         this.filteredTasks = res;
       },
+      error: (err) => {
+        this.loaderService.setLoader(false)
+      }
     });
   }
 

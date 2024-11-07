@@ -13,6 +13,7 @@ import {
   IFormControlBody,
 } from 'src/app/shared/model/form.model';
 import { FormsService } from 'src/app/shared/service/forms.service';
+import { LoaderService } from 'src/app/shared/service/loader.service';
 
 @Component({
   selector: 'app-reset-password',
@@ -35,6 +36,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
     private formService: FormsService,
     private router: Router,
     private _snackBar: MatSnackBar,
+    private loaderService: LoaderService
   ) {
     this.activatedRoute.params.subscribe((param) => {
       this.token = param['token'];
@@ -96,8 +98,10 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   }
 
   resetPassword(password: string) {
+    this.loaderService.setLoader(true)
     this.authService.resetPassword(this.email, this.token, password).subscribe({
       next: (res) => {
+        this.loaderService.setLoader(false)
         if (res.Status === APIStatusMessage.Success) {
           const config: MatSnackBarConfig = {
             duration: 5 * 1000,
@@ -107,6 +111,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
         }
       },
       error: (err) => {
+        this.loaderService.setLoader(false)
         console.log(err)
       } 
     });

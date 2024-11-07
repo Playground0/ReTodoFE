@@ -35,6 +35,11 @@
     }
 
     .panelAction:hover {
+      background-color: $primary-color;
+      color: #fff;
+    }
+
+    .selectedPanel{
       background-color: $secondary-color;
       color: #fff;
     }

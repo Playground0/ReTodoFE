@@ -8,6 +8,7 @@ import {
   TaskActions,
 } from 'src/app/private/model/UI/tasks.contanst';
 import { PrivateCommonService } from 'src/app/private/services/private-common.service';
+import { LoaderService } from 'src/app/shared/service/loader.service';
 
 @Component({
   selector: 'app-todo-task-list',
@@ -23,7 +24,8 @@ export class TodoTaskListComponent {
 
   constructor(
     public dialog: MatDialog,
-    private commonService: PrivateCommonService
+    private commonService: PrivateCommonService,
+    private loaderService: LoaderService,
   ) {}
 
   showTaskDetails(task: ITask) {
@@ -76,54 +78,66 @@ export class TodoTaskListComponent {
   }
 
   private addTask(data: ITask) {
+    this.loaderService.setLoader(true)
     const isDefault = Object.values(DefaultPanels).includes(this.currentPanel);
     data.currentListId = isDefault ? '0' : this.currentPanel;
     this.commonService.addTask(data).subscribe({
       next: (res) => {
+        this.loaderService.setLoader(false)
         if (res) {
           this.taskActionCompleted.emit(true);
         }
       },
       error: () => {
+        this.loaderService.setLoader(false)
         this.taskActionCompleted.emit(false);
       },
     });
   }
 
   private updateTask(data: ITask) {
+    this.loaderService.setLoader(true)
     this.commonService.updateTask(data).subscribe({
       next: (res) => {
         if (res) {
+          this.loaderService.setLoader(false)
           this.taskActionCompleted.emit(true);
         }
       },
       error: () => {
+        this.loaderService.setLoader(false)
         this.taskActionCompleted.emit(false);
       },
     });
   }
 
   public deleteTask(task: ITask) {
+    this.loaderService.setLoader(true)
     this.commonService.deleteTask(task._id as string).subscribe({
       next: (res) => {
         if (res) {
+          this.loaderService.setLoader(false)
           this.taskActionCompleted.emit(true);
         }
       },
       error: () => {
+        this.loaderService.setLoader(false)
         this.taskActionCompleted.emit(false);
       },
     });
   }
 
   markAsDone(task: ITask) {
+    this.loaderService.setLoader(true)
     this.commonService.completeTask(task._id).subscribe({
       next: (res) => {
         if (res) {
+          this.loaderService.setLoader(false)
           this.taskActionCompleted.emit(true);
         }
       },
       error: () => {
+        this.loaderService.setLoader(false)
         this.taskActionCompleted.emit(false);
       },
     });
