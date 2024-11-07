@@ -12,6 +12,7 @@ import { ListApiService } from '../../services/list-api.service';
 import { IList, IListCreate } from '../../model/list.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { LoaderService } from 'src/app/shared/service/loader.service';
 
 @Component({
   selector: 'app-todo',
@@ -70,7 +71,8 @@ export class TodoComponent implements OnInit, OnDestroy {
     private listService: ListApiService,
     private fb: FormBuilder,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private loaderService: LoaderService,
   ) {
     this.listForm = this.fb.group({
       listTitle: ['', Validators.required],
@@ -105,14 +107,19 @@ export class TodoComponent implements OnInit, OnDestroy {
   }
 
   private trackUndoAction() {
+    this.loaderService.setLoader(true)
     this.subscription.add(
       this.commonService.undoAction.subscribe({
         next: (res: boolean) => {
+          this.loaderService.setLoader(false)
           if (res) {
             this.checkForDefaultAndRefresh();
             this.commonService.setUndoAction(false);
           }
         },
+        error: (err) =>{
+          this.loaderService.setLoader(false)
+        }
       })
     );
   }
@@ -126,11 +133,16 @@ export class TodoComponent implements OnInit, OnDestroy {
   }
 
   private getTasks(link: string) {
+    this.loaderService.setLoader(true)
     this.subscription.add(
       this.taskApiService.getTasks(link).subscribe({
         next: (res: ITask[]) => {
+          this.loaderService.setLoader(false)
           this.tasks = res.sort(this.compareTasks);
         },
+        error: (err) => {
+          this.loaderService.setLoader(false)
+        }
       })
     );
   }
@@ -188,9 +200,11 @@ export class TodoComponent implements OnInit, OnDestroy {
   }
 
   private getLists() {
+    this.loaderService.setLoader(true)
     this.subscription.add(
       this.listService.getAll().subscribe({
         next: (res: IList[]) => {
+          this.loaderService.setLoader(false)
           this.userLists = res.map((list) => {
             return {
               name: list.listTitle,
@@ -201,6 +215,9 @@ export class TodoComponent implements OnInit, OnDestroy {
           });
           this.setupListTitle(this.currentPanel);
         },
+        error: (err) =>{
+          this.loaderService.setLoader(false)
+        }
       })
     );
   }
@@ -216,6 +233,7 @@ export class TodoComponent implements OnInit, OnDestroy {
       return
     }
     const newList: IListCreate = this.listForm.value;
+    this.loaderService.setLoader(true)
     this.subscription.add(
       this.listService
         .createList(newList)
@@ -227,9 +245,11 @@ export class TodoComponent implements OnInit, OnDestroy {
         )
         .subscribe({
           next: (res: IList) => {
+            this.loaderService.setLoader(false)
             this.snackBar.open(`${res.listTitle} is created!!`, '', this.snackBarConfig)
           },
           error: (err) => {
+            this.loaderService.setLoader(false)
             const error = err.error;
             this.snackBar.open(error.Message, '', this.snackBarConfig)
           }
@@ -238,12 +258,15 @@ export class TodoComponent implements OnInit, OnDestroy {
   }
 
   public getTasksForList(listId: string) {
+    this.loaderService.setLoader(true)
     this.subscription.add(
       this.taskApiService.getCustomListTask(listId).subscribe({
         next: (res) => {
+          this.loaderService.setLoader(false)
           this.tasks = res.sort(this.compareTasks);
         },
         error: (err) => {
+          this.loaderService.setLoader(false)
           this.router.navigateByUrl('**');
         },
       })

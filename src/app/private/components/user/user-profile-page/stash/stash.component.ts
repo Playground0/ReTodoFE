@@ -3,6 +3,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { UserApiService } from 'src/app/private/services/user-api.service';
+import { LoaderService } from 'src/app/shared/service/loader.service';
 
 @Component({
   selector: 'app-stash',
@@ -16,7 +17,7 @@ export class StashComponent implements OnInit, OnDestroy {
     'updationDate',
     'type',
     'undo',
-    'delete'
+    'delete',
   ];
   dataSource = new MatTableDataSource();
   private subscription = new Subscription();
@@ -29,26 +30,36 @@ export class StashComponent implements OnInit, OnDestroy {
     'Hidden lists',
   ];
 
-  listCount = 0
-  taskCount = 0
-  prestineTable : unknown[] = []
+  listCount = 0;
+  taskCount = 0;
+  prestineTable: unknown[] = [];
 
-  constructor(private userService: UserApiService) {}
+  constructor(
+    private userService: UserApiService,
+    private loaderService: LoaderService
+  ) {}
 
   ngOnInit(): void {
     this.getStashedRecords();
   }
 
   getStashedRecords() {
-    this.subscription.add(this.userService.getStash().subscribe({
-      next: (res) => {  
-        const tasks = res.tasks
-        const lists = res.lists
-        this.prestineTable = [...tasks,...lists]
-        this.dataSource.data = this.prestineTable
-        this.getTaskCounts(this.dataSource.data)
-      }
-    }));
+    this.loaderService.setLoader(true);
+    this.subscription.add(
+      this.userService.getStash().subscribe({
+        next: (res) => {
+          this.loaderService.setLoader(false);
+          const tasks = res.tasks;
+          const lists = res.lists;
+          this.prestineTable = [...tasks, ...lists];
+          this.dataSource.data = this.prestineTable;
+          this.getTaskCounts(this.dataSource.data);
+        },
+        error: (err) => {
+          this.loaderService.setLoader(false);
+        },
+      })
+    );
   }
 
   applyFilter(event: Event) {
@@ -56,52 +67,64 @@ export class StashComponent implements OnInit, OnDestroy {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  filterChooser(event: MatSelectChange){
+  filterChooser(event: MatSelectChange) {
     const filter = event.value;
-    if(!filter) {
-      this.dataSource.data = this.prestineTable
+    if (!filter) {
+      this.dataSource.data = this.prestineTable;
     }
-    switch(filter){
-      case 'Deleted tasks':{
-        this.dataSource.data = this.prestineTable.filter((item:any) => item.isTask && item.isDeleted)
+    switch (filter) {
+      case 'Deleted tasks': {
+        this.dataSource.data = this.prestineTable.filter(
+          (item: any) => item.isTask && item.isDeleted
+        );
         break;
       }
-      case 'Archived tasks':{
-        this.dataSource.data = this.prestineTable.filter((item:any) => item.isTask && item.isArchived)
+      case 'Archived tasks': {
+        this.dataSource.data = this.prestineTable.filter(
+          (item: any) => item.isTask && item.isArchived
+        );
         break;
       }
-      case 'Completed tasks':{
-        this.dataSource.data = this.prestineTable.filter((item:any) => item.isTask && item.isCompleted)
+      case 'Completed tasks': {
+        this.dataSource.data = this.prestineTable.filter(
+          (item: any) => item.isTask && item.isCompleted
+        );
         break;
       }
-      case 'Deleted lists':{
-        this.dataSource.data = this.prestineTable.filter((item:any) => !item.isTask && item.isDeleted)
+      case 'Deleted lists': {
+        this.dataSource.data = this.prestineTable.filter(
+          (item: any) => !item.isTask && item.isDeleted
+        );
         break;
       }
-      case 'Archived lists':{
-        this.dataSource.data = this.prestineTable.filter((item:any) => !item.isTask && item.isArchived)
+      case 'Archived lists': {
+        this.dataSource.data = this.prestineTable.filter(
+          (item: any) => !item.isTask && item.isArchived
+        );
         break;
       }
-      case 'Hidden lists':{
-        this.dataSource.data = this.prestineTable.filter((item:any) => !item.isTask && item.isHidden)
+      case 'Hidden lists': {
+        this.dataSource.data = this.prestineTable.filter(
+          (item: any) => !item.isTask && item.isHidden
+        );
         break;
       }
     }
   }
 
-  getTaskCounts(table: unknown[]){
-    let tasks = table.filter((res:any) => res.isTask)
-    let lists = table.filter((res:any) => !res.isTask)
-    this.listCount = lists.length
-    this.taskCount = tasks.length
+  getTaskCounts(table: unknown[]) {
+    let tasks = table.filter((res: any) => res.isTask);
+    let lists = table.filter((res: any) => !res.isTask);
+    this.listCount = lists.length;
+    this.taskCount = tasks.length;
   }
 
-  restoreItem(item: unknown){
-    console.log(item)
+  restoreItem(item: unknown) {
+    console.log(item);
   }
 
-  deleteItem(item: unknown){
-    console.log(item)
+  deleteItem(item: unknown) {
+    console.log(item);
   }
 
   ngOnDestroy(): void {

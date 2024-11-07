@@ -3,85 +3,98 @@
     <h2>{{ pageTitle }}</h2>
     <span>Task:{{ tasks.length }}</span>
   </div>
-  <button matTooltip="Add Task" class="add-btn" (click)="openDialog('200ms', '200ms')">
+  <button
+    matTooltip="Add Task"
+    class="add-btn"
+    (click)="openDialog('200ms', '200ms')"
+  >
     <mat-icon>add_circle</mat-icon>
   </button>
 </div>
 
 <div class="main-section">
-  <div
-    class="task-section"
-    *ngFor="let task of tasks"
-    (click)="showTaskDetails(task)"
-  >
-    <div class="task-details">
-      <div class="task-title-section">
-        <mat-checkbox
-          matTooltip="Mark as Complete"
-          class="checkbox"
-          (click)="markAsDone(task); $event.stopPropagation()"
-        ></mat-checkbox>
-        {{ task.taskTitle }}
-      </div>
-      <div class="task-details-section">
-        <div
-          *ngIf="task.taskEndDate"
-          [ngClass]="{ overdue: task.taskEndDate | dateoverdue }"
-        >
-          <mat-icon *ngIf="task.taskEndDate | dateoverdue" matTooltip="Overdue"
-            >notification_important</mat-icon
-          >
-          <div class="date-time-block">
-            <span matTooltip="Due Date">{{ task.taskEndDate | transformdate }}</span>
-            <span matTooltip="Due Time"> {{ task.taskEndDate | fetchtime }}</span>
-          </div>
-        </div>
-        <span *ngIf="!task.taskEndDate"><i>No Date</i></span>
-        <div *ngIf="task.priority">
-          <div [ngSwitch]="task.priority">
-            <mat-icon
-              style="color: #4CAF50;"
-              *ngSwitchCase="1"
-              matTooltip="Low Priority"
-              >low_priority</mat-icon
-            >
-            <mat-icon
-              style="color: #5c6bc0"
-              *ngSwitchCase="2"
-              matTooltip="Normal Priority"
-              >label</mat-icon
-            >
-            <mat-icon
-              style="color:  #E64A19;"
-              *ngSwitchCase="3"
-              matTooltip="High Priority"
-              >star</mat-icon
-            >
-            <mat-icon
-              style="color: #d32f2f"
-              *ngSwitchCase="4"
-              matTooltip="Urgent Priority"
-              >warning</mat-icon
-            >
-          </div>
-        </div>
-        <div *ngIf="task.isRecurring">
-          <span matTooltip="Recurring Task"
-            ><mat-icon style="color:#00BCD4;">autorenew</mat-icon></span
-          >
-        </div>
-        <mat-icon matTooltip="Inbox" *ngIf="task.currentListId === '0'"
-          >inbox</mat-icon
-        >
-      </div>
-    </div>
-
-    <mat-icon
-      matTooltip="Delete Task"
-      (click)="deleteTask(task); $event.stopPropagation()"
-      >delete</mat-icon
+  <div class="task-list-section">
+    <div
+      class="task-section"
+      *ngFor="let task of tasks"
+      (click)="showTaskDetails(task)"
     >
+      <div class="task-details">
+        <div class="task-title-section">
+          <mat-checkbox
+            matTooltip="Mark as Complete"
+            class="checkbox"
+            (click)="markAsDone(task); $event.stopPropagation()"
+          ></mat-checkbox>
+          {{ task.taskTitle }}
+        </div>
+        <div class="task-details-section">
+          <div
+            *ngIf="task.taskEndDate"
+            [ngClass]="{ overdue: task.taskEndDate | dateoverdue }"
+          >
+            <mat-icon
+              *ngIf="task.taskEndDate | dateoverdue"
+              matTooltip="Overdue"
+              >notification_important</mat-icon
+            >
+            <div class="date-time-block">
+              <span matTooltip="Due Date">{{
+                task.taskEndDate | transformdate
+              }}</span>
+              <span matTooltip="Due Time">
+                {{ task.taskEndDate | fetchtime }}</span
+              >
+            </div>
+          </div>
+          <span *ngIf="!task.taskEndDate"><i>No Date</i></span>
+          <div *ngIf="task.priority">
+            <div [ngSwitch]="task.priority">
+              <mat-icon
+                style="color: #4caf50"
+                *ngSwitchCase="1"
+                matTooltip="Low Priority"
+                >low_priority</mat-icon
+              >
+              <mat-icon
+                style="color: #5c6bc0"
+                *ngSwitchCase="2"
+                matTooltip="Normal Priority"
+                >label</mat-icon
+              >
+              <mat-icon
+                style="color: #e64a19"
+                *ngSwitchCase="3"
+                matTooltip="High Priority"
+                >star</mat-icon
+              >
+              <mat-icon
+                style="color: #d32f2f"
+                *ngSwitchCase="4"
+                matTooltip="Urgent Priority"
+                >warning</mat-icon
+              >
+            </div>
+          </div>
+          <div *ngIf="task.isRecurring">
+            <span matTooltip="Recurring Task"
+              ><mat-icon style="color: #00bcd4">autorenew</mat-icon></span
+            >
+          </div>
+          <mat-icon matTooltip="Inbox" *ngIf="task.currentListId === '0'"
+            >inbox</mat-icon
+          >
+        </div>
+      </div>
+
+      <mat-icon
+        matTooltip="Delete Task"
+        (click)="deleteTask(task); $event.stopPropagation()"
+        >delete</mat-icon
+      >
+    </div>
   </div>
+
   <button class="add-btn" (click)="openDialog('200ms', '200ms')">
     + Add task
   </button>

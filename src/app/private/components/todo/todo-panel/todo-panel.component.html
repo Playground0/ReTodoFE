@@ -2,7 +2,7 @@
   <ng-content></ng-content>
   <div
     (click)="sendViewAction(item)"
-    class="panelAction"
+    [ngClass]="checkCurrentPanel(item) ? 'panelAction selectedPanel' : 'panelAction'"
     *ngFor="let item of panelItems"
   >
     <mat-icon *ngIf="item.link === 'inbox'">inbox</mat-icon>

@@ -36,46 +36,64 @@
   min-width: 97.52%;
   color: $text-color;
   // border: 1px solid $primary-color;
-
-  .task-section {
-    background-color: $background-color;
-    padding: 0.5rem 1rem;
-    min-width: 100%;
+  .task-list-section{
     display: flex;
-    align-items: center;
-    box-shadow: $default-shadow;
-    cursor: pointer;
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+    overflow-x: hidden;
+    padding-right: 2rem;
+    overflow-y: auto;
+    height: 40vh;
+    scrollbar-width: none;
     border-radius: 20px;
-    transition: 0.5s;
-    justify-content: space-between;
 
-    .task-details {
+    .task-section {
+      background-color: $background-color;
+      padding: 0.5rem 1rem;
+      min-width: 100%;
       display: flex;
-      align-items: flex-start;
-      flex-direction: column;
-      gap: 0;
-      // min-width: 100%;
-
-      .task-details-section {
+      align-items: center;
+      box-shadow: $default-shadow;
+      cursor: pointer;
+      border-radius: 20px;
+      transition: 0.5s;
+      justify-content: space-between;
+  
+      .task-details {
         display: flex;
-        gap: 2rem;
-        margin-left: 3rem;
-        align-items: center;
-
-        .date-time-block{
-          background-color: darkgray;
-          padding: 5px;
-          border-radius: 5px;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0;
+        // min-width: 100%;
+  
+        .task-details-section {
+          display: flex;
+          gap: 2rem;
+          margin-left: 3rem;
+          align-items: center;
+  
+          .date-time-block{
+            background-color: darkgray;
+            padding: 5px;
+            border-radius: 5px;
+          }
         }
       }
     }
+    .task-section:hover {
+      background-color: $primary-color;
+      color: $background-color;
+      // border: 1px solid $background-color;
+      box-shadow: $default-shadow;
+    }
   }
-  .task-section:hover {
-    background-color: $primary-color;
-    color: $background-color;
-    // border: 1px solid $background-color;
-    box-shadow: $default-shadow;
+
+  .task-list-section::-webkit-scrollbar {
+    display: none;              /* Hide scrollbar in Chrome, Safari, and Edge */
   }
+  
+  
 }
 
 .add-btn {

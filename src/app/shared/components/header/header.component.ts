@@ -4,6 +4,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { LocalDataService } from 'src/app/core/services/localdata.service';
 import { IUser } from '../../../core/model/auth-page.model';
 import { APIStatusMessage, IAPIResponse } from '../../model/basic-api.model';
+import { LoaderService } from '../../service/loader.service';
 
 @Component({
   selector: 'app-header',
@@ -67,7 +68,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private localDataService: LocalDataService
+    private localDataService: LocalDataService,
+    private loaderService: LoaderService
   ) {}
 
   ngOnInit(): void {
@@ -91,12 +93,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   logout() {
+    this.loaderService.setLoader(true);
     this.authService.logout(this.userInfo.email).subscribe({
       next: (res:IAPIResponse) => {
+        this.loaderService.setLoader(false);
         if (res.Status === APIStatusMessage.Success) {
           console.log('logged out successfully');
         }
       },
+      error: (err) => {
+        this.loaderService.setLoader(false);
+        console.log(err)
+      }
     });
   }
 

@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { IUser } from 'src/app/core/model/auth-page.model';
-import { LocalDataService } from 'src/app/core/services/localdata.service';
 import { ITask, ITaskCreate, ITaskUpdate } from '../model/task.model';
 import { TaskAPIService } from './task-api.service';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { SnackBarAction, TaskActions } from '../model/UI/tasks.contanst';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { LoaderService } from 'src/app/shared/service/loader.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,12 +14,10 @@ export class PrivateCommonService {
   private undoAction$ = new BehaviorSubject(false);
   undoAction = this.undoAction$.asObservable();
   constructor(
-    private localDataService: LocalDataService,
     private taskApiService: TaskAPIService,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
+    private loaderService: LoaderService
   ) {}
-
-
 
   private get snackBarConfig(): MatSnackBarConfig {
     return {
@@ -28,9 +25,7 @@ export class PrivateCommonService {
     };
   }
 
-  public addTask(
-    task: ITask,
-  ): Observable<ITask> {
+  public addTask(task: ITask): Observable<ITask> {
     let newTask: ITaskCreate = {
       currentListId: task.currentListId ? task.currentListId : '0',
       previousListID: '0',
@@ -116,13 +111,16 @@ export class PrivateCommonService {
   }
 
   private undoTask(taskId: string, taskAction: TaskActions) {
-    return this.taskApiService
-      .undoTaskAction(taskId, taskAction)
-      .subscribe({
-        next: (res) => {
-          this.setUndoAction(true);
-        },
-      });
+    this.loaderService.setLoader(true);
+    return this.taskApiService.undoTaskAction(taskId, taskAction).subscribe({
+      next: (res) => {
+        this.loaderService.setLoader(false);
+        this.setUndoAction(true);
+      },
+      error: (err) => {
+        this.loaderService.setLoader(false);
+      },
+    });
   }
 
   public setUndoAction(value: boolean) {

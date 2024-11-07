@@ -28,4 +28,8 @@ export class UserProfilePageComponent {
   sendViewAction(panelLink: IPanelLink) {
     this.router.navigateByUrl(`/profile/${panelLink.link}`)
   }
+
+  checkCurrentPanel(item: IPanelLink){
+    return this.router.url.includes(item.link)
+  }
 }
